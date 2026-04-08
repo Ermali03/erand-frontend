@@ -53,24 +53,6 @@ export default function DischargePage() {
 
   const canEdit = hasPermission("discharge");
 
-  if (!isPatientAdmitted) {
-    return (
-      <div className="mx-auto max-w-4xl">
-        <Alert>
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Patient Not Admitted</AlertTitle>
-          <AlertDescription>
-            Please complete the anamnesis and confirm admission before accessing
-            discharge.
-          </AlertDescription>
-        </Alert>
-        <Button className="mt-4" onClick={() => router.push("/anamnesis")}>
-          Go to Anamnesis
-        </Button>
-      </div>
-    );
-  }
-
   const handlePrint = () => {
     window.print();
   };
@@ -208,6 +190,24 @@ export default function DischargePage() {
   const [paper, setPaper] = useState(() => initialPaper);
   const therapyLines = splitLines(dischargeReport.therapyForHome);
   const followUpLines = splitLines(dischargeReport.followUpInstructions);
+
+  if (!isPatientAdmitted) {
+    return (
+      <div className="mx-auto max-w-4xl">
+        <Alert>
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Patient Not Admitted</AlertTitle>
+          <AlertDescription>
+            Please complete the anamnesis and confirm admission before accessing
+            discharge.
+          </AlertDescription>
+        </Alert>
+        <Button className="mt-4" onClick={() => router.push("/anamnesis")}>
+          Go to Anamnesis
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-5xl space-y-6">

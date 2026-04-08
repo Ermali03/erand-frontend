@@ -1,12 +1,12 @@
 import type { Doctor, Patient, Epicrisis, Surgery, DischargeReport } from "./types"
 
 export const mockDoctors: Doctor[] = [
-  { id: "DOC-001", name: "Dr. Sarah Chen", specialty: "Internal Medicine", role: "Admin" },
-  { id: "DOC-002", name: "Dr. Michael Roberts", specialty: "General Surgery", role: "Main Surgeon" },
-  { id: "DOC-003", name: "Dr. Emily Watson", specialty: "Cardiology", role: "Doctor" },
-  { id: "DOC-004", name: "Dr. James Miller", specialty: "Anesthesiology", role: "Doctor" },
-  { id: "DOC-005", name: "Nurse Patricia Davis", specialty: "Critical Care", role: "Nurse" },
-  { id: "DOC-006", name: "Dr. David Kim", specialty: "Orthopedics", role: "Doctor" },
+  { id: "DOC-001", name: "Dr. Sarah Chen", specialty: "Internal Medicine", role: "Admin", roles: ["Admin"] },
+  { id: "DOC-002", name: "Dr. Michael Roberts", specialty: "General Surgery", role: "Main Surgeon", roles: ["Main Surgeon"] },
+  { id: "DOC-003", name: "Dr. Emily Watson", specialty: "Cardiology", role: "Doctor", roles: ["Doctor"] },
+  { id: "DOC-004", name: "Dr. James Miller", specialty: "Anesthesiology", role: "Doctor", roles: ["Doctor"] },
+  { id: "DOC-005", name: "Nurse Patricia Davis", specialty: "Critical Care", role: "Nurse", roles: ["Nurse"] },
+  { id: "DOC-006", name: "Dr. David Kim", specialty: "Orthopedics", role: "Doctor", roles: ["Doctor"] },
 ]
 
 export const createEmptyPatient = (): Patient => ({

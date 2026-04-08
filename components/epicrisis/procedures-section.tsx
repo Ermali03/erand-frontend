@@ -11,9 +11,9 @@ import type { Procedure } from "@/lib/types"
 import { Plus, User, Clock, Syringe } from "lucide-react"
 
 export function ProceduresSection() {
-  const { epicrisis, updateEpicrisis, currentDoctor, patient, hasPermission } = useClinic()
+  const { epicrisis, updateEpicrisis, currentDoctor, hasPermission } = useClinic()
   const [formData, setFormData] = useState({ procedureName: "", notes: "" })
-  const canEdit = hasPermission("edit") && !patient.isDischarged
+  const canEdit = hasPermission("edit")
 
   const handleAddProcedure = () => {
     if (!formData.procedureName.trim()) return

@@ -1,16 +1,24 @@
 // Medical app types
 
+export type DoctorRole = "Admin" | "Main Surgeon" | "Doctor" | "Nurse"
+
+export interface AuthUser {
+  id: number;
+  email: string;
+  role: DoctorRole;
+  roles: DoctorRole[];
+}
+
 export type PatientStatus = "admitted" | "in-treatment" | "operated" | "discharged"
 
 export type AdmissionSource = "ED" | "Clinic"
-
-export type DoctorRole = "Admin" | "Main Surgeon" | "Doctor" | "Nurse"
 
 export interface Doctor {
   id: string
   name: string
   specialty: string
   role: DoctorRole
+  roles: DoctorRole[]
 }
 
 export interface Patient {

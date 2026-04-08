@@ -19,7 +19,7 @@ export default function AnamnesisPage() {
   const [isSaving, setIsSaving] = useState(false)
   const [showSavedMessage, setShowSavedMessage] = useState(false)
 
-  const canEdit = hasPermission("edit") && !patient.isDischarged
+  const canEdit = hasPermission("edit")
 
   const handleSaveDraft = () => {
     setIsSaving(true)
@@ -48,9 +48,9 @@ export default function AnamnesisPage() {
           <p className="text-muted-foreground">Register a new patient when admitted</p>
         </div>
         {patient.isDischarged && (
-          <div className="flex items-center gap-2 rounded-lg bg-muted px-4 py-2">
-            <Lock className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">Form locked after discharge</span>
+          <div className="flex items-center gap-2 rounded-lg bg-success/10 px-4 py-2">
+            <Lock className="h-4 w-4 text-success" />
+            <span className="text-sm text-success">Patient discharged, editing still allowed</span>
           </div>
         )}
       </div>
@@ -215,7 +215,7 @@ export default function AnamnesisPage() {
       <Card>
         <CardHeader>
           <CardTitle>Medical History</CardTitle>
-          <CardDescription>Patient's medical background</CardDescription>
+          <CardDescription>Patient&apos;s medical background</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-6">
           <div className="space-y-2">

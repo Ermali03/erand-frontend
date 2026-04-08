@@ -12,14 +12,14 @@ import type { BloodTest } from "@/lib/types"
 import { Plus, Trash2 } from "lucide-react"
 
 export function BloodTestsSection() {
-  const { epicrisis, updateEpicrisis, patient, hasPermission } = useClinic()
+  const { epicrisis, updateEpicrisis, hasPermission } = useClinic()
   const [formData, setFormData] = useState({
     testName: "",
     value: "",
     unit: "",
     referenceRange: "",
   })
-  const canEdit = hasPermission("edit") && !patient.isDischarged
+  const canEdit = hasPermission("edit")
 
   const handleAddTest = () => {
     if (!formData.testName.trim() || !formData.value.trim()) return

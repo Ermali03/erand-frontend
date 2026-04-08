@@ -29,7 +29,7 @@ export default function SurgeryPage() {
   const [selectedDoctor, setSelectedDoctor] = useState("")
   const [selectedRole, setSelectedRole] = useState<TeamRole>("Assistant Surgeon")
 
-  const canEdit = hasPermission("surgery") && !patient.isDischarged
+  const canEdit = hasPermission("surgery")
 
   // Redirect if patient not admitted or not operated
   if (!isPatientAdmitted) {
@@ -56,7 +56,7 @@ export default function SurgeryPage() {
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Surgery Not Enabled</AlertTitle>
           <AlertDescription>
-            Enable the "Patient Operated" toggle in the Epicrisis page to access surgery records.
+            Enable the &quot;Patient Operated&quot; toggle in the Epicrisis page to access surgery records.
           </AlertDescription>
         </Alert>
         <Button className="mt-4" onClick={() => router.push("/epicrisis")}>
@@ -115,9 +115,9 @@ export default function SurgeryPage() {
           <p className="text-muted-foreground">Document surgical procedure details</p>
         </div>
         {patient.isDischarged && (
-          <div className="flex items-center gap-2 rounded-lg bg-muted px-4 py-2">
-            <Lock className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">Form locked after discharge</span>
+          <div className="flex items-center gap-2 rounded-lg bg-success/10 px-4 py-2">
+            <Lock className="h-4 w-4 text-success" />
+            <span className="text-sm text-success">Patient discharged, editing still allowed</span>
           </div>
         )}
       </div>

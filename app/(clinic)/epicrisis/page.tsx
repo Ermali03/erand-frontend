@@ -51,12 +51,12 @@ export default function EpicrisisPage() {
         </div>
         <div className="flex items-center gap-4">
           {patient.isDischarged && (
-            <div className="flex items-center gap-2 rounded-lg bg-muted px-4 py-2">
-              <Lock className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">Form locked after discharge</span>
+            <div className="flex items-center gap-2 rounded-lg bg-success/10 px-4 py-2">
+              <Lock className="h-4 w-4 text-success" />
+              <span className="text-sm text-success">Patient discharged, editing still allowed</span>
             </div>
           )}
-          {hasPermission("surgery") && !patient.isDischarged && (
+          {hasPermission("surgery") && (
             <div className="flex items-center gap-2 rounded-lg border bg-card px-4 py-2">
               <Scissors className="h-4 w-4 text-muted-foreground" />
               <Label htmlFor="surgery-toggle" className="text-sm">

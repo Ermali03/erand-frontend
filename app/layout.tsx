@@ -1,16 +1,15 @@
-import type React from "react"
-import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
-import { Analytics } from "@vercel/analytics/next"
-import "./globals.css"
-
-const _geist = Geist({ subsets: ["latin"] })
-const _geistMono = Geist_Mono({ subsets: ["latin"] })
+import type React from "react";
+import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
+import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "MediClinic - Patient Management System",
-  description: "Medical clinic patient management from admission to discharge",
-  generator: "v0.app",
+  title: {
+    default: "Ortopedia Clinic",
+    template: "%s | Ortopedia Clinic",
+  },
+  description:
+    "Orthopedic clinic workspace for admissions, surgery coordination, patient records, and discharge workflows.",
   icons: {
     icon: [
       {
@@ -28,19 +27,29 @@ export const metadata: Metadata = {
     ],
     apple: "/apple-icon.png",
   },
-}
+  applicationName: "Ortopedia Clinic",
+  keywords: [
+    "orthopedics",
+    "clinic",
+    "ehr",
+    "patient workflow",
+    "hospital operations",
+  ],
+};
+
+import { ClinicProvider } from "@/lib/clinic-context";
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html lang="en">
-      <body className={`font-sans antialiased`}>
-        {children}
+      <body className="min-h-screen font-sans antialiased">
+        <ClinicProvider>{children}</ClinicProvider>
         <Analytics />
       </body>
     </html>
-  )
+  );
 }

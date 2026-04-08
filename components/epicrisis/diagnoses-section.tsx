@@ -11,10 +11,10 @@ import type { Diagnosis } from "@/lib/types"
 import { Plus, User, Clock, Stethoscope } from "lucide-react"
 
 export function DiagnosesSection() {
-  const { epicrisis, updateEpicrisis, currentDoctor, patient, hasPermission } = useClinic()
+  const { epicrisis, updateEpicrisis, currentDoctor, hasPermission } = useClinic()
   const [newDiagnosis, setNewDiagnosis] = useState("")
   const [icdCode, setIcdCode] = useState("")
-  const canEdit = hasPermission("edit") && !patient.isDischarged
+  const canEdit = hasPermission("edit")
 
   const handleAddDiagnosis = () => {
     if (!newDiagnosis.trim()) return

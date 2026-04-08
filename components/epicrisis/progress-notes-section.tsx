@@ -10,9 +10,9 @@ import type { ProgressNote } from "@/lib/types"
 import { Plus, User, Clock } from "lucide-react"
 
 export function ProgressNotesSection() {
-  const { epicrisis, updateEpicrisis, currentDoctor, patient, hasPermission } = useClinic()
+  const { epicrisis, updateEpicrisis, currentDoctor, hasPermission } = useClinic()
   const [newNote, setNewNote] = useState("")
-  const canEdit = hasPermission("edit") && !patient.isDischarged
+  const canEdit = hasPermission("edit")
 
   const handleAddNote = () => {
     if (!newNote.trim()) return

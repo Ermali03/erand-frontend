@@ -14,14 +14,14 @@ import type { Medication } from "@/lib/types"
 import { Plus, Trash2 } from "lucide-react"
 
 export function MedicationsSection() {
-  const { epicrisis, updateEpicrisis, currentDoctor, patient, hasPermission } = useClinic()
+  const { epicrisis, updateEpicrisis, currentDoctor, hasPermission } = useClinic()
   const [formData, setFormData] = useState({
     name: "",
     dosage: "",
     frequency: "",
     route: "oral",
   })
-  const canEdit = hasPermission("edit") && !patient.isDischarged
+  const canEdit = hasPermission("edit")
 
   const handleAddMedication = () => {
     if (!formData.name.trim() || !formData.dosage.trim()) return

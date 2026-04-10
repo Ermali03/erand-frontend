@@ -37,23 +37,23 @@ export function DiagnosesSection() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Diagnoses</CardTitle>
-        <CardDescription>Record patient diagnoses with ICD codes</CardDescription>
+        <CardTitle>Diagnozat</CardTitle>
+        <CardDescription>Regjistroni diagnozat e pacientit me kode ICD</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {canEdit && (
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-2 sm:col-span-2">
-              <Label htmlFor="diagnosis">Diagnosis</Label>
+              <Label htmlFor="diagnosis">Diagnoza</Label>
               <Input
                 id="diagnosis"
-                placeholder="Enter diagnosis..."
+                placeholder="Shkruani diagnozën..."
                 value={newDiagnosis}
                 onChange={(e) => setNewDiagnosis(e.target.value)}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="icdCode">ICD Code (optional)</Label>
+              <Label htmlFor="icdCode">Kodi ICD (opsionale)</Label>
               <Input
                 id="icdCode"
                 placeholder="e.g., J18.9"
@@ -64,7 +64,7 @@ export function DiagnosesSection() {
             <div className="flex items-end">
               <Button onClick={handleAddDiagnosis} disabled={!newDiagnosis.trim()} size="sm">
                 <Plus className="mr-2 h-4 w-4" />
-                Add Diagnosis
+                Shto diagnozë
               </Button>
             </div>
           </div>
@@ -72,7 +72,7 @@ export function DiagnosesSection() {
 
         <div className="space-y-3">
           {epicrisis.diagnoses.length === 0 ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">No diagnoses recorded yet</p>
+            <p className="py-8 text-center text-sm text-muted-foreground">Ende nuk ka diagnoza të regjistruara</p>
           ) : (
             epicrisis.diagnoses.map((diagnosis) => (
               <div key={diagnosis.id} className="rounded-lg border bg-muted/30 p-4">
@@ -83,7 +83,7 @@ export function DiagnosesSection() {
                   </span>
                   <span className="flex items-center gap-1">
                     <Clock className="h-3 w-3" />
-                    {diagnosis.date} at {diagnosis.time}
+                    {diagnosis.date} në {diagnosis.time}
                   </span>
                 </div>
                 <div className="flex items-start gap-2">

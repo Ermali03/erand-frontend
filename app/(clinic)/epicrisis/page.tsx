@@ -23,13 +23,13 @@ export default function EpicrisisPage() {
       <div className="mx-auto max-w-4xl">
         <Alert>
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Patient Not Admitted</AlertTitle>
+          <AlertTitle>Pacienti nuk është pranuar</AlertTitle>
           <AlertDescription>
-            Please complete the anamnesis and confirm admission before accessing epicrisis.
+            Ju lutem plotësoni anamnezën dhe konfirmoni pranimin para se të hapni epikrizën.
           </AlertDescription>
         </Alert>
         <Button className="mt-4" onClick={() => router.push("/anamnesis")}>
-          Go to Anamnesis
+          Shko te anamneza
         </Button>
       </div>
     )
@@ -46,21 +46,21 @@ export default function EpicrisisPage() {
     <div className="mx-auto max-w-5xl space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Epicrisis</h1>
-          <p className="text-muted-foreground">Track everything during hospitalization</p>
+          <h1 className="text-2xl font-bold text-foreground">Epikriza</h1>
+          <p className="text-muted-foreground">Ndiqni gjithçka gjatë hospitalizimit</p>
         </div>
         <div className="flex items-center gap-4">
           {patient.isDischarged && (
             <div className="flex items-center gap-2 rounded-lg bg-success/10 px-4 py-2">
               <Lock className="h-4 w-4 text-success" />
-              <span className="text-sm text-success">Patient discharged, editing still allowed</span>
+              <span className="text-sm text-success">Pacienti është lëshuar, por modifikimi lejohet</span>
             </div>
           )}
           {hasPermission("surgery") && (
             <div className="flex items-center gap-2 rounded-lg border bg-card px-4 py-2">
               <Scissors className="h-4 w-4 text-muted-foreground" />
               <Label htmlFor="surgery-toggle" className="text-sm">
-                Patient Operated
+                Pacienti është operuar
               </Label>
               <Switch id="surgery-toggle" checked={patient.isOperated} onCheckedChange={handleSurgeryToggle} />
             </div>
@@ -70,11 +70,11 @@ export default function EpicrisisPage() {
 
       <Tabs defaultValue="progress" className="w-full">
         <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="progress">Progress Notes</TabsTrigger>
-          <TabsTrigger value="diagnoses">Diagnoses</TabsTrigger>
-          <TabsTrigger value="bloodtests">Blood Tests</TabsTrigger>
-          <TabsTrigger value="procedures">Procedures</TabsTrigger>
-          <TabsTrigger value="medications">Medications</TabsTrigger>
+          <TabsTrigger value="progress">Shënimet ditore</TabsTrigger>
+          <TabsTrigger value="diagnoses">Diagnozat</TabsTrigger>
+          <TabsTrigger value="bloodtests">Analizat e gjakut</TabsTrigger>
+          <TabsTrigger value="procedures">Procedurat</TabsTrigger>
+          <TabsTrigger value="medications">Terapia</TabsTrigger>
         </TabsList>
         <TabsContent value="progress" className="mt-6">
           <ProgressNotesSection />
@@ -95,14 +95,14 @@ export default function EpicrisisPage() {
 
       <div className="flex justify-end gap-3">
         <Button variant="outline" onClick={() => router.push("/anamnesis")}>
-          Back to Anamnesis
+          Kthehu te anamneza
         </Button>
         {patient.isOperated && (
           <Button variant="outline" onClick={() => router.push("/surgery")}>
-            View Surgery
+            Shiko operacionin
           </Button>
         )}
-        <Button onClick={() => router.push("/discharge")}>Continue to Discharge</Button>
+        <Button onClick={() => router.push("/discharge")}>Vazhdo te lëshimi</Button>
       </div>
     </div>
   )

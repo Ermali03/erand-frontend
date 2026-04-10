@@ -35,15 +35,15 @@ export function ProceduresSection() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Procedures</CardTitle>
-        <CardDescription>Non-surgical procedures performed</CardDescription>
+        <CardTitle>Procedurat</CardTitle>
+        <CardDescription>Procedurat jo-kirurgjikale të kryera</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {canEdit && (
           <div className="grid gap-3">
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="procedureName">Procedure Name</Label>
+                <Label htmlFor="procedureName">Emri i procedurës</Label>
                 <Input
                   id="procedureName"
                   placeholder="e.g., Central line insertion"
@@ -52,10 +52,10 @@ export function ProceduresSection() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="procedureNotes">Notes</Label>
+                <Label htmlFor="procedureNotes">Shënime</Label>
                 <Input
                   id="procedureNotes"
-                  placeholder="Additional notes..."
+                  placeholder="Shënime shtesë..."
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                 />
@@ -63,14 +63,14 @@ export function ProceduresSection() {
             </div>
             <Button onClick={handleAddProcedure} disabled={!formData.procedureName.trim()} size="sm" className="w-fit">
               <Plus className="mr-2 h-4 w-4" />
-              Add Procedure
+              Shto procedurë
             </Button>
           </div>
         )}
 
         <div className="space-y-3">
           {epicrisis.procedures.length === 0 ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">No procedures recorded yet</p>
+            <p className="py-8 text-center text-sm text-muted-foreground">Ende nuk ka procedura të regjistruara</p>
           ) : (
             epicrisis.procedures.map((procedure) => (
               <div key={procedure.id} className="rounded-lg border bg-muted/30 p-4">
@@ -81,7 +81,7 @@ export function ProceduresSection() {
                   </span>
                   <span className="flex items-center gap-1">
                     <Clock className="h-3 w-3" />
-                    {procedure.date} at {procedure.time}
+                    {procedure.date} në {procedure.time}
                   </span>
                 </div>
                 <div className="flex items-start gap-2">

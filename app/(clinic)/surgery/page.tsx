@@ -17,10 +17,10 @@ import { AlertCircle, Lock, UserPlus, Trash2, Crown, Shield, Eye } from "lucide-
 type TeamRole = SurgeryTeamMember["role"]
 
 const roleConfig: Record<TeamRole, { icon: typeof Crown; label: string; canEdit: boolean }> = {
-  "Main Surgeon": { icon: Crown, label: "Main Surgeon", canEdit: true },
-  "Assistant Surgeon": { icon: Shield, label: "Assistant", canEdit: false },
-  Anesthesiologist: { icon: Shield, label: "Anesthesiologist", canEdit: false },
-  "Anesthesia Nurse": { icon: Eye, label: "Anesthesia Nurse", canEdit: false },
+  "Main Surgeon": { icon: Crown, label: "Kirurgu kryesor", canEdit: true },
+  "Assistant Surgeon": { icon: Shield, label: "Asistent", canEdit: false },
+  Anesthesiologist: { icon: Shield, label: "Anesteziolog", canEdit: false },
+  "Anesthesia Nurse": { icon: Eye, label: "Infermier/e e anestezionit", canEdit: false },
 }
 
 export default function SurgeryPage() {
@@ -37,13 +37,13 @@ export default function SurgeryPage() {
       <div className="mx-auto max-w-4xl">
         <Alert>
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Patient Not Admitted</AlertTitle>
+          <AlertTitle>Pacienti nuk është pranuar</AlertTitle>
           <AlertDescription>
-            Please complete the anamnesis and confirm admission before accessing surgery records.
+            Ju lutem plotësoni anamnezën dhe konfirmoni pranimin para se të hapni kartelën e operacionit.
           </AlertDescription>
         </Alert>
         <Button className="mt-4" onClick={() => router.push("/anamnesis")}>
-          Go to Anamnesis
+          Shko te anamneza
         </Button>
       </div>
     )
@@ -54,13 +54,13 @@ export default function SurgeryPage() {
       <div className="mx-auto max-w-4xl">
         <Alert>
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Surgery Not Enabled</AlertTitle>
+          <AlertTitle>Operacioni nuk është aktivizuar</AlertTitle>
           <AlertDescription>
-            Enable the &quot;Patient Operated&quot; toggle in the Epicrisis page to access surgery records.
+            Aktivizoni opsionin &quot;Pacienti është operuar&quot; në faqen e epikrizës për të hapur kartelën e operacionit.
           </AlertDescription>
         </Alert>
         <Button className="mt-4" onClick={() => router.push("/epicrisis")}>
-          Go to Epicrisis
+          Shko te epikriza
         </Button>
       </div>
     )
@@ -111,13 +111,13 @@ export default function SurgeryPage() {
     <div className="mx-auto max-w-4xl space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Surgery Record</h1>
-          <p className="text-muted-foreground">Document surgical procedure details</p>
+          <h1 className="text-2xl font-bold text-foreground">Kartela e operacionit</h1>
+          <p className="text-muted-foreground">Dokumentoni detajet e procedurës kirurgjikale</p>
         </div>
         {patient.isDischarged && (
           <div className="flex items-center gap-2 rounded-lg bg-success/10 px-4 py-2">
             <Lock className="h-4 w-4 text-success" />
-            <span className="text-sm text-success">Patient discharged, editing still allowed</span>
+            <span className="text-sm text-success">Pacienti është lëshuar, por modifikimi lejohet</span>
           </div>
         )}
       </div>
@@ -125,12 +125,12 @@ export default function SurgeryPage() {
       {/* Surgery Details */}
       <Card>
         <CardHeader>
-          <CardTitle>Surgery Details</CardTitle>
-          <CardDescription>Basic information about the surgical procedure</CardDescription>
+          <CardTitle>Detajet e operacionit</CardTitle>
+          <CardDescription>Informacioni bazë për procedurën kirurgjikale</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-6 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="surgeryDate">Surgery Date</Label>
+            <Label htmlFor="surgeryDate">Data e operacionit</Label>
             <Input
               id="surgeryDate"
               type="date"
@@ -141,7 +141,7 @@ export default function SurgeryPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="surgeryTime">Surgery Time</Label>
+            <Label htmlFor="surgeryTime">Ora e operacionit</Label>
             <Input
               id="surgeryTime"
               type="time"
@@ -152,10 +152,10 @@ export default function SurgeryPage() {
           </div>
 
           <div className="space-y-2 sm:col-span-2">
-            <Label htmlFor="surgeryType">Surgery Type</Label>
+            <Label htmlFor="surgeryType">Lloji i operacionit</Label>
             <Input
               id="surgeryType"
-              placeholder="e.g., Laparoscopic Cholecystectomy"
+              placeholder="p.sh. Artroplastikë totale e hipit"
               value={surgery.surgeryType}
               onChange={(e) => updateSurgery({ surgeryType: e.target.value })}
               disabled={!canEdit}
@@ -163,10 +163,10 @@ export default function SurgeryPage() {
           </div>
 
           <div className="space-y-2 sm:col-span-2">
-            <Label htmlFor="intraoperativeNotes">Intraoperative Notes</Label>
+            <Label htmlFor="intraoperativeNotes">Shënime intraoperative</Label>
             <Textarea
               id="intraoperativeNotes"
-              placeholder="Document findings, techniques, complications..."
+              placeholder="Dokumentoni gjetjet, teknikat, komplikimet..."
               value={surgery.intraoperativeNotes}
               onChange={(e) => updateSurgery({ intraoperativeNotes: e.target.value })}
               disabled={!canEdit}
@@ -179,17 +179,17 @@ export default function SurgeryPage() {
       {/* Operating Team */}
       <Card>
         <CardHeader>
-          <CardTitle>Operating Team</CardTitle>
-          <CardDescription>Team members involved in the surgery</CardDescription>
+          <CardTitle>Ekipi operativ</CardTitle>
+          <CardDescription>Anëtarët e ekipit të përfshirë në operacion</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {canEdit && (
             <div className="grid gap-3 sm:grid-cols-3">
               <div className="space-y-2">
-                <Label htmlFor="teamDoctor">Doctor</Label>
+                <Label htmlFor="teamDoctor">Mjeku</Label>
                 <Select value={selectedDoctor} onValueChange={setSelectedDoctor}>
                   <SelectTrigger id="teamDoctor">
-                    <SelectValue placeholder="Select doctor" />
+                    <SelectValue placeholder="Zgjidhni mjekun" />
                   </SelectTrigger>
                   <SelectContent>
                     {availableDoctors.map((doctor) => (
@@ -202,16 +202,16 @@ export default function SurgeryPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="teamRole">Role</Label>
+                <Label htmlFor="teamRole">Roli</Label>
                 <Select value={selectedRole} onValueChange={(value: TeamRole) => setSelectedRole(value)}>
                   <SelectTrigger id="teamRole">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Main Surgeon">Main Surgeon</SelectItem>
-                    <SelectItem value="Assistant Surgeon">Assistant Surgeon</SelectItem>
-                    <SelectItem value="Anesthesiologist">Anesthesiologist</SelectItem>
-                    <SelectItem value="Anesthesia Nurse">Anesthesia Nurse</SelectItem>
+                    <SelectItem value="Main Surgeon">Kirurgu kryesor</SelectItem>
+                    <SelectItem value="Assistant Surgeon">Kirurg asistent</SelectItem>
+                    <SelectItem value="Anesthesiologist">Anesteziolog</SelectItem>
+                    <SelectItem value="Anesthesia Nurse">Infermier/e e anestezionit</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -219,14 +219,14 @@ export default function SurgeryPage() {
               <div className="flex items-end">
                 <Button onClick={handleAddTeamMember} disabled={!selectedDoctor} size="sm">
                   <UserPlus className="mr-2 h-4 w-4" />
-                  Add Member
+                  Shto anëtar
                 </Button>
               </div>
             </div>
           )}
 
           {surgery.team.length === 0 ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">No team members added yet</p>
+            <p className="py-8 text-center text-sm text-muted-foreground">Ende nuk ka anëtarë të ekipit</p>
           ) : (
             <div className="space-y-3">
               {surgery.team.map((member) => {
@@ -253,9 +253,9 @@ export default function SurgeryPage() {
                             {member.role}
                           </Badge>
                           {member.canEdit ? (
-                            <span className="text-xs text-success">Can edit</span>
+                            <span className="text-xs text-success">Mund të modifikojë</span>
                           ) : (
-                            <span className="text-xs text-muted-foreground">View only</span>
+                            <span className="text-xs text-muted-foreground">Vetëm shikim</span>
                           )}
                         </div>
                       </div>
@@ -285,9 +285,9 @@ export default function SurgeryPage() {
       {/* Actions */}
       <div className="flex justify-end gap-3">
         <Button variant="outline" onClick={() => router.push("/epicrisis")}>
-          Back to Epicrisis
+          Kthehu te epikriza
         </Button>
-        <Button onClick={() => router.push("/discharge")}>Continue to Discharge</Button>
+        <Button onClick={() => router.push("/discharge")}>Vazhdo te lëshimi</Button>
       </div>
     </div>
   )

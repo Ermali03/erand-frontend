@@ -71,10 +71,10 @@ export default function PatientDetailsPage() {
         setPatient(data);
       } catch (e: unknown) {
         if (e instanceof ApiError && e.status === 404) {
-          setError("Patient not found");
+          setError("Pacienti nuk u gjet");
         } else {
           setError(
-            e instanceof Error ? e.message : "Failed to fetch patient data",
+            e instanceof Error ? e.message : "Marrja e të dhënave të pacientit dështoi",
           );
         }
       } finally {
@@ -95,18 +95,18 @@ export default function PatientDetailsPage() {
   if (!hasPermission("view")) {
     return (
       <div className="p-6 text-muted-foreground">
-        You do not have permission to view patient records.
+        Nuk keni leje për të parë kartelat e pacientëve.
       </div>
     );
   }
 
-  if (loading) return <div className="p-6">Loading patient data...</div>;
+  if (loading) return <div className="p-6">Duke ngarkuar të dhënat e pacientit...</div>;
   if (error) return <div className="p-6 text-destructive">{error}</div>;
-  if (!patient) return <div className="p-6">No patient data available.</div>;
+  if (!patient) return <div className="p-6">Nuk ka të dhëna për pacientin.</div>;
 
   const dob = patient.date_of_birth
     ? new Date(patient.date_of_birth).toLocaleDateString()
-    : "Unknown";
+    : "E panjohur";
 
   return (
     <div className="mx-auto max-w-5xl space-y-6 pb-12">
@@ -120,12 +120,12 @@ export default function PatientDetailsPage() {
         </Button>
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
-            Patient File: {patient.full_name}
+            Kartela e pacientit: {patient.full_name}
           </h1>
           <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground">
             <span className="font-mono">ID: {patient.id}</span>
             <span>•</span>
-            <span>DOB: {dob}</span>
+            <span>Datëlindja: {dob}</span>
             <span>•</span>
             <Badge
               variant="outline"
@@ -155,8 +155,8 @@ export default function PatientDetailsPage() {
               <ClipboardList className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <CardTitle>Anamnesis</CardTitle>
-              <CardDescription>Initial admission details</CardDescription>
+              <CardTitle>Anamneza</CardTitle>
+              <CardDescription>Detajet fillestare të pranimit</CardDescription>
             </div>
           </CardHeader>
           <CardContent>
@@ -164,7 +164,7 @@ export default function PatientDetailsPage() {
               <div className="space-y-4">
                 <div>
                   <h4 className="font-semibold text-sm text-muted-foreground mb-1">
-                    Chief Complaint
+                    Ankesa kryesore
                   </h4>
                   <p className="text-sm whitespace-pre-wrap">
                     {patient.anamnesis.chief_complaint}
@@ -172,7 +172,7 @@ export default function PatientDetailsPage() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-sm text-muted-foreground mb-1">
-                    Medical History
+                    Historia mjekësore
                   </h4>
                   <p className="text-sm whitespace-pre-wrap">
                     {patient.anamnesis.medical_history}
@@ -181,7 +181,7 @@ export default function PatientDetailsPage() {
               </div>
             ) : (
               <p className="text-sm text-muted-foreground italic">
-                No anamnesis record found.
+                Nuk u gjet anamnezë e regjistruar.
               </p>
             )}
           </CardContent>
@@ -194,8 +194,8 @@ export default function PatientDetailsPage() {
               <FileText className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <CardTitle>Epicrisis</CardTitle>
-              <CardDescription>Clinical evaluation and plan</CardDescription>
+              <CardTitle>Epikriza</CardTitle>
+              <CardDescription>Vlerësimi klinik dhe plani</CardDescription>
             </div>
           </CardHeader>
           <CardContent>
@@ -203,7 +203,7 @@ export default function PatientDetailsPage() {
               <div className="space-y-4">
                 <div>
                   <h4 className="font-semibold text-sm text-muted-foreground mb-1">
-                    Diagnosis
+                    Diagnoza
                   </h4>
                   <p className="text-sm whitespace-pre-wrap">
                     {patient.epicrisis.diagnosis}
@@ -211,7 +211,7 @@ export default function PatientDetailsPage() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-sm text-muted-foreground mb-1">
-                    Treatment Plan
+                    Plani i trajtimit
                   </h4>
                   <p className="text-sm whitespace-pre-wrap">
                     {patient.epicrisis.treatment_plan}
@@ -220,7 +220,7 @@ export default function PatientDetailsPage() {
               </div>
             ) : (
               <p className="text-sm text-muted-foreground italic">
-                No epicrisis record found.
+                Nuk u gjet epikrizë e regjistruar.
               </p>
             )}
           </CardContent>
@@ -233,9 +233,9 @@ export default function PatientDetailsPage() {
               <Scissors className="h-5 w-5 text-info" />
             </div>
             <div>
-              <CardTitle>Surgery Report</CardTitle>
+              <CardTitle>Raporti i operacionit</CardTitle>
               <CardDescription>
-                Operation details (if applicable)
+                Detajet e operacionit (nëse ka)
               </CardDescription>
             </div>
           </CardHeader>
@@ -245,7 +245,7 @@ export default function PatientDetailsPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <h4 className="font-semibold text-sm text-muted-foreground mb-1">
-                      Procedure
+                      Procedura
                     </h4>
                     <p className="text-sm font-medium">
                       {patient.surgery.procedure_name}
@@ -253,7 +253,7 @@ export default function PatientDetailsPage() {
                   </div>
                   <div>
                     <h4 className="font-semibold text-sm text-muted-foreground mb-1">
-                      Date
+                      Data
                     </h4>
                     <p className="text-sm">
                       {new Date(patient.surgery.date).toLocaleDateString()}
@@ -262,13 +262,13 @@ export default function PatientDetailsPage() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-sm text-muted-foreground mb-1">
-                    Surgeon ID
+                    ID e kirurgut
                   </h4>
                   <p className="text-sm">{patient.surgery.surgeon_id}</p>
                 </div>
                 <div>
                   <h4 className="font-semibold text-sm text-muted-foreground mb-1">
-                    Operative Notes
+                    Shënime operative
                   </h4>
                   <p className="text-sm whitespace-pre-wrap">
                     {patient.surgery.notes}
@@ -277,7 +277,7 @@ export default function PatientDetailsPage() {
               </div>
             ) : (
               <p className="text-sm text-muted-foreground italic">
-                No surgery record found.
+                Nuk u gjet raport operacioni.
               </p>
             )}
           </CardContent>
@@ -290,8 +290,8 @@ export default function PatientDetailsPage() {
               <Activity className="h-5 w-5 text-success" />
             </div>
             <div>
-              <CardTitle>Discharge Notes</CardTitle>
-              <CardDescription>Final instructions and status</CardDescription>
+              <CardTitle>Shënimet e lëshimit</CardTitle>
+              <CardDescription>Udhëzimet finale dhe statusi</CardDescription>
             </div>
           </CardHeader>
           <CardContent>
@@ -299,7 +299,7 @@ export default function PatientDetailsPage() {
               <div className="space-y-4">
                 <div>
                   <h4 className="font-semibold text-sm text-muted-foreground mb-1">
-                    Discharge Date
+                    Data e lëshimit
                   </h4>
                   <p className="text-sm">
                     {new Date(
@@ -309,7 +309,7 @@ export default function PatientDetailsPage() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-sm text-muted-foreground mb-1">
-                    Instructions & Therapy
+                    Udhëzimet dhe terapia
                   </h4>
                   <p className="text-sm whitespace-pre-wrap">
                     {patient.discharge_report.instructions}
@@ -318,8 +318,7 @@ export default function PatientDetailsPage() {
               </div>
             ) : (
               <p className="text-sm text-muted-foreground italic">
-                No discharge record found (Patient currently admitted or in
-                treatment).
+                Nuk u gjet raport lëshimi (pacienti është aktualisht në pranim ose në trajtim).
               </p>
             )}
           </CardContent>

@@ -23,7 +23,7 @@ export default function RegisterPage() {
     setError("");
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError("Fjalëkalimet nuk përputhen.");
       return;
     }
 
@@ -39,7 +39,7 @@ export default function RegisterPage() {
       setError(
         err instanceof ApiError
           ? err.message
-          : "An unexpected error occurred during registration.",
+          : "Ndodhi një gabim i papritur gjatë regjistrimit.",
       );
     } finally {
       setLoading(false);
@@ -54,10 +54,10 @@ export default function RegisterPage() {
             <Activity className="h-6 w-6 text-primary" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight">
-            Create an account
+            Krijo llogari
           </h1>
           <p className="text-sm text-muted-foreground">
-            Register as a new user (Default Role: Nurse)
+            Regjistrohu si përdorues i ri (Roli fillestar: Infermier/e)
           </p>
         </div>
 
@@ -75,7 +75,7 @@ export default function RegisterPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Fjalëkalimi</Label>
               <Input
                 id="password"
                 type="password"
@@ -86,7 +86,7 @@ export default function RegisterPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirm-password">Confirm Password</Label>
+              <Label htmlFor="confirm-password">Konfirmo fjalëkalimin</Label>
               <Input
                 id="confirm-password"
                 type="password"
@@ -103,16 +103,16 @@ export default function RegisterPage() {
           )}
 
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Registering..." : "Register"}
+            {loading ? "Duke u regjistruar..." : "Regjistrohu"}
           </Button>
 
           <p className="text-center text-sm text-muted-foreground">
-            Already have an account?{" "}
+            Keni tashmë llogari?{" "}
             <Link
               href="/login"
               className="font-semibold text-primary hover:underline"
             >
-              Log in
+              Hyr
             </Link>
           </p>
         </form>

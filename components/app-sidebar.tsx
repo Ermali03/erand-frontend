@@ -29,35 +29,35 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   {
-    title: "All Patients",
+    title: "Të gjithë pacientët",
     href: "/patients",
     icon: UserSquare2,
     requiresAdmission: false,
     requiresSurgery: false,
   },
   {
-    title: "Anamnesis",
+    title: "Anamneza",
     href: "/anamnesis",
     icon: ClipboardList,
     requiresAdmission: false,
     requiresSurgery: false,
   },
   {
-    title: "Epicrisis",
+    title: "Epikriza",
     href: "/epicrisis",
     icon: FileText,
     requiresAdmission: true,
     requiresSurgery: false,
   },
   {
-    title: "Surgery",
+    title: "Operacioni",
     href: "/surgery",
     icon: Scissors,
     requiresAdmission: true,
     requiresSurgery: true,
   },
   {
-    title: "Discharge",
+    title: "Lëshimi",
     href: "/discharge",
     icon: FileOutput,
     requiresAdmission: true,
@@ -88,7 +88,7 @@ export function AppSidebar() {
               Ortopedia
             </h1>
             <p className="text-xs text-sidebar-foreground/60">
-              Clinical Operations
+              Operacionet Klinike
             </p>
           </div>
         </div>
@@ -96,7 +96,7 @@ export function AppSidebar() {
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Patient Workflow</SidebarGroupLabel>
+          <SidebarGroupLabel>Rrjedha e pacientit</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {navItems.map((item) => {
@@ -126,14 +126,14 @@ export function AppSidebar() {
 
         {hasPermission("manage-doctors") && (
           <SidebarGroup>
-            <SidebarGroupLabel>Administration</SidebarGroupLabel>
+            <SidebarGroupLabel>Administrimi</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild isActive={pathname === "/doctors"}>
                     <Link href="/doctors">
                       <Users className="h-4 w-4" />
-                      <span>Doctors</span>
+                      <span>Mjekët</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -151,7 +151,7 @@ export function AppSidebar() {
               className="w-full text-left"
             >
               <LogOut className="h-4 w-4 mr-2" />
-              <span>Log out</span>
+              <span>Dil</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

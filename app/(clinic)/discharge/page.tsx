@@ -170,14 +170,13 @@ export default function DischargePage() {
       <div className="mx-auto max-w-4xl">
         <Alert>
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Patient Not Admitted</AlertTitle>
+          <AlertTitle>Pacienti nuk është pranuar</AlertTitle>
           <AlertDescription>
-            Please complete the anamnesis and confirm admission before accessing
-            discharge.
+            Ju lutem plotësoni anamnezën dhe konfirmoni pranimin para se të hapni lëshimin.
           </AlertDescription>
         </Alert>
         <Button className="mt-4" onClick={() => router.push("/anamnesis")}>
-          Go to Anamnesis
+          Shko te anamneza
         </Button>
       </div>
     );
@@ -188,17 +187,17 @@ export default function DischargePage() {
       <div className="flex items-center justify-between print:hidden">
         <div>
           <h1 className="text-2xl font-bold text-foreground">
-            Discharge Report
+            Raporti i lëshimit
           </h1>
           <p className="text-muted-foreground">
-            Generate final patient discharge documentation
+            Gjeneroni dokumentacionin final të lëshimit të pacientit
           </p>
         </div>
         <div className="flex items-center gap-3">
           {patient.isDischarged && (
             <div className="flex items-center gap-2 rounded-lg bg-success/10 px-4 py-2">
               <CheckCircle className="h-4 w-4 text-success" />
-              <span className="text-sm text-success">Patient Discharged</span>
+              <span className="text-sm text-success">Pacienti është lëshuar</span>
             </div>
           )}
         </div>
@@ -219,15 +218,15 @@ export default function DischargePage() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Discharge Instructions</CardTitle>
+              <CardTitle>Udhëzimet e lëshimit</CardTitle>
               <CardDescription>
-                Complete these fields before discharge
+                Plotësoni këto fusha para lëshimit
               </CardDescription>
             </div>
             {patient.isDischarged && (
               <div className="flex items-center gap-2 text-success">
                 <Lock className="h-4 w-4" />
-                <span className="text-sm">Editable after discharge</span>
+                <span className="text-sm">Mund të modifikohet edhe pas lëshimit</span>
               </div>
             )}
           </div>
@@ -239,7 +238,7 @@ export default function DischargePage() {
             </Label>
             <Textarea
               id="finalDiagnosis"
-              placeholder="Enter final diagnosis..."
+              placeholder="Shkruani diagnozën përfundimtare..."
               value={dischargeReport.finalDiagnosis}
               onChange={(e) =>
                 updateDischargeReport({ finalDiagnosis: e.target.value })
@@ -254,7 +253,7 @@ export default function DischargePage() {
             </Label>
             <Textarea
               id="therapyForHome"
-              placeholder="Medications and treatments to continue at home..."
+              placeholder="Barnat dhe trajtimet që duhet të vazhdojnë në shtëpi..."
               value={dischargeReport.therapyForHome}
               onChange={(e) =>
                 updateDischargeReport({ therapyForHome: e.target.value })
@@ -269,7 +268,7 @@ export default function DischargePage() {
             </Label>
             <Textarea
               id="followUpInstructions"
-              placeholder="Follow-up appointments, care instructions, warning signs..."
+              placeholder="Kontrollet, udhëzimet e kujdesit, shenjat paralajmëruese..."
               value={dischargeReport.followUpInstructions}
               onChange={(e) =>
                 updateDischargeReport({ followUpInstructions: e.target.value })
@@ -283,11 +282,10 @@ export default function DischargePage() {
       <section className="space-y-3">
         <div className="print:hidden">
           <h2 className="text-lg font-semibold tracking-tight">
-            Final Paper Preview
+            Pamja përfundimtare e dokumentit
           </h2>
           <p className="text-sm text-muted-foreground">
-            This is the single-page discharge document that will be printed and
-            shared with the patient team.
+            Ky është dokumenti njëfaqësh i lëshimit që do të printohet dhe ndahet me ekipin e pacientit.
           </p>
         </div>
 
@@ -657,7 +655,7 @@ export default function DischargePage() {
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <AlertCircle className="h-4 w-4" />
           <span>
-            Complete all fields before generating the discharge report
+            Plotësoni të gjitha fushat para gjenerimit të raportit të lëshimit
           </span>
         </div>
         <div className="flex gap-3">
@@ -667,7 +665,7 @@ export default function DischargePage() {
             disabled={!isFormComplete}
           >
             <Printer className="mr-2 h-4 w-4" />
-            Print
+            Printo
           </Button>
           {canEdit && (
             <>
@@ -676,7 +674,7 @@ export default function DischargePage() {
                 disabled={!isFormComplete}
               >
                 <CheckCircle className="mr-2 h-4 w-4" />
-                Mark as Discharged
+                Shëno si i lëshuar
               </Button>
               <Button
                 onClick={() => void handleDischargeAndReset()}
@@ -684,7 +682,7 @@ export default function DischargePage() {
                 disabled={!isFormComplete}
               >
                 <CheckCircle className="mr-2 h-4 w-4" />
-                Discharge & New Patient
+                Lësho dhe hap pacient të ri
               </Button>
             </>
           )}

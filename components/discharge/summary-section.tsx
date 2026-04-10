@@ -10,53 +10,53 @@ export function AnamnesisSummary() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">Patient Information</CardTitle>
-        <CardDescription>Anamnesis summary</CardDescription>
+        <CardTitle className="text-lg">Të dhënat e pacientit</CardTitle>
+        <CardDescription>Përmbledhje e anamnezës</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="flex items-start gap-2">
             <User className="mt-0.5 h-4 w-4 text-muted-foreground" />
             <div>
-              <p className="text-sm text-muted-foreground">Full Name</p>
-              <p className="font-medium">{patient.fullName || "Not provided"}</p>
+              <p className="text-sm text-muted-foreground">Emri i plotë</p>
+              <p className="font-medium">{patient.fullName || "Nuk është dhënë"}</p>
             </div>
           </div>
           <div className="flex items-start gap-2">
             <Calendar className="mt-0.5 h-4 w-4 text-muted-foreground" />
             <div>
-              <p className="text-sm text-muted-foreground">Date of Birth</p>
+              <p className="text-sm text-muted-foreground">Data e lindjes</p>
               <p className="font-medium">
-                {patient.dateOfBirth ? new Date(patient.dateOfBirth).toLocaleDateString() : "Not provided"}
+                {patient.dateOfBirth ? new Date(patient.dateOfBirth).toLocaleDateString() : "Nuk është dhënë"}
               </p>
             </div>
           </div>
           <div className="flex items-start gap-2">
             <MapPin className="mt-0.5 h-4 w-4 text-muted-foreground" />
             <div>
-              <p className="text-sm text-muted-foreground">Address</p>
-              <p className="font-medium">{patient.address || "Not provided"}</p>
+              <p className="text-sm text-muted-foreground">Adresa</p>
+              <p className="font-medium">{patient.address || "Nuk është dhënë"}</p>
             </div>
           </div>
           <div className="flex items-start gap-2">
             <Phone className="mt-0.5 h-4 w-4 text-muted-foreground" />
             <div>
-              <p className="text-sm text-muted-foreground">Phone</p>
-              <p className="font-medium">{patient.phone || "Not provided"}</p>
+              <p className="text-sm text-muted-foreground">Telefoni</p>
+              <p className="font-medium">{patient.phone || "Nuk është dhënë"}</p>
             </div>
           </div>
         </div>
 
         <div className="border-t pt-4">
-          <h4 className="mb-2 font-medium">Reason for Admission</h4>
-          <p className="text-sm text-muted-foreground">{patient.reasonForAdmission || "Not documented"}</p>
+          <h4 className="mb-2 font-medium">Arsyeja e pranimit</h4>
+          <p className="text-sm text-muted-foreground">{patient.reasonForAdmission || "Nuk është dokumentuar"}</p>
         </div>
 
         {patient.allergies && (
           <div className="flex items-start gap-2 rounded-lg border border-destructive/20 bg-destructive/5 p-3">
             <AlertTriangle className="mt-0.5 h-4 w-4 text-destructive" />
             <div>
-              <p className="text-sm font-medium text-destructive">Allergies</p>
+              <p className="text-sm font-medium text-destructive">Alergjitë</p>
               <p className="text-sm text-muted-foreground">{patient.allergies}</p>
             </div>
           </div>
@@ -66,7 +66,7 @@ export function AnamnesisSummary() {
           <div className="flex items-start gap-2">
             <Pill className="mt-0.5 h-4 w-4 text-muted-foreground" />
             <div>
-              <p className="text-sm text-muted-foreground">Current Medications (on admission)</p>
+              <p className="text-sm text-muted-foreground">Barnat aktuale (në pranim)</p>
               <p className="text-sm">{patient.currentMedications}</p>
             </div>
           </div>
@@ -82,14 +82,14 @@ export function EpicrisisSummary() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">Hospitalization Summary</CardTitle>
-        <CardDescription>Epicrisis overview</CardDescription>
+        <CardTitle className="text-lg">Përmbledhja e hospitalizimit</CardTitle>
+        <CardDescription>Përmbledhje e epikrizës</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
           <div className="flex items-center gap-2">
             <Stethoscope className="h-4 w-4 text-primary" />
-            <h4 className="font-medium">Diagnoses ({epicrisis.diagnoses.length})</h4>
+            <h4 className="font-medium">Diagnozat ({epicrisis.diagnoses.length})</h4>
           </div>
           {epicrisis.diagnoses.length > 0 ? (
             <ul className="mt-2 space-y-1 text-sm">
@@ -100,14 +100,14 @@ export function EpicrisisSummary() {
               ))}
             </ul>
           ) : (
-            <p className="mt-2 text-sm text-muted-foreground">No diagnoses recorded</p>
+            <p className="mt-2 text-sm text-muted-foreground">Nuk ka diagnoza të regjistruara</p>
           )}
         </div>
 
         <div>
           <div className="flex items-center gap-2">
             <Syringe className="h-4 w-4 text-primary" />
-            <h4 className="font-medium">Procedures ({epicrisis.procedures.length})</h4>
+            <h4 className="font-medium">Procedurat ({epicrisis.procedures.length})</h4>
           </div>
           {epicrisis.procedures.length > 0 ? (
             <ul className="mt-2 space-y-1 text-sm">
@@ -118,14 +118,14 @@ export function EpicrisisSummary() {
               ))}
             </ul>
           ) : (
-            <p className="mt-2 text-sm text-muted-foreground">No procedures recorded</p>
+            <p className="mt-2 text-sm text-muted-foreground">Nuk ka procedura të regjistruara</p>
           )}
         </div>
 
         <div>
           <div className="flex items-center gap-2">
             <Pill className="h-4 w-4 text-primary" />
-            <h4 className="font-medium">Medications During Stay ({epicrisis.medications.length})</h4>
+            <h4 className="font-medium">Terapia gjatë qëndrimit ({epicrisis.medications.length})</h4>
           </div>
           {epicrisis.medications.length > 0 ? (
             <ul className="mt-2 space-y-1 text-sm">
@@ -136,13 +136,13 @@ export function EpicrisisSummary() {
               ))}
             </ul>
           ) : (
-            <p className="mt-2 text-sm text-muted-foreground">No medications recorded</p>
+            <p className="mt-2 text-sm text-muted-foreground">Nuk ka terapi të regjistruar</p>
           )}
         </div>
 
         <div className="border-t pt-4">
           <p className="text-sm text-muted-foreground">
-            Progress Notes: {epicrisis.progressNotes.length} | Blood Tests: {epicrisis.bloodTests.length}
+            Shënime ditore: {epicrisis.progressNotes.length} | Analiza gjaku: {epicrisis.bloodTests.length}
           </p>
         </div>
       </CardContent>
@@ -157,11 +157,11 @@ export function SurgerySummary() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Surgery</CardTitle>
-          <CardDescription>Patient was not operated</CardDescription>
+          <CardTitle className="text-lg">Operacioni</CardTitle>
+          <CardDescription>Pacienti nuk është operuar</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">No surgical procedure was performed during this admission.</p>
+          <p className="text-sm text-muted-foreground">Nuk është kryer asnjë procedurë kirurgjikale gjatë këtij pranimi.</p>
         </CardContent>
       </Card>
     )
@@ -172,19 +172,19 @@ export function SurgerySummary() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">Surgery Summary</CardTitle>
-        <CardDescription>Surgical procedure details</CardDescription>
+        <CardTitle className="text-lg">Përmbledhja e operacionit</CardTitle>
+        <CardDescription>Detajet e procedurës kirurgjikale</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <p className="text-sm text-muted-foreground">Surgery Type</p>
-            <p className="font-medium">{surgery.surgeryType || "Not specified"}</p>
+            <p className="text-sm text-muted-foreground">Lloji i operacionit</p>
+            <p className="font-medium">{surgery.surgeryType || "Nuk është specifikuar"}</p>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">Date & Time</p>
+            <p className="text-sm text-muted-foreground">Data dhe ora</p>
             <p className="font-medium">
-              {surgery.date ? new Date(surgery.date).toLocaleDateString() : "Not specified"}
+              {surgery.date ? new Date(surgery.date).toLocaleDateString() : "Nuk është specifikuar"}
               {surgery.time && ` at ${surgery.time}`}
             </p>
           </div>
@@ -192,14 +192,14 @@ export function SurgerySummary() {
 
         {mainSurgeon && (
           <div>
-            <p className="text-sm text-muted-foreground">Main Surgeon</p>
+            <p className="text-sm text-muted-foreground">Kirurgu kryesor</p>
             <p className="font-medium">{mainSurgeon.doctorName}</p>
           </div>
         )}
 
         {surgery.intraoperativeNotes && (
           <div>
-            <p className="text-sm text-muted-foreground">Intraoperative Notes</p>
+            <p className="text-sm text-muted-foreground">Shënime intraoperative</p>
             <p className="mt-1 text-sm">{surgery.intraoperativeNotes}</p>
           </div>
         )}
@@ -207,7 +207,7 @@ export function SurgerySummary() {
         {surgery.team.length > 0 && (
           <div className="border-t pt-4">
             <p className="text-sm text-muted-foreground">
-              Operating Team: {surgery.team.map((m) => `${m.doctorName} (${m.role})`).join(", ")}
+              Ekipi operativ: {surgery.team.map((m) => `${m.doctorName} (${m.role})`).join(", ")}
             </p>
           </div>
         )}

@@ -47,14 +47,14 @@ export function MedicationsSection() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Medications</CardTitle>
-        <CardDescription>Medications during hospitalization</CardDescription>
+        <CardTitle>Terapia</CardTitle>
+        <CardDescription>Barnat gjatë hospitalizimit</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {canEdit && (
           <div className="grid gap-3 sm:grid-cols-5">
             <div className="space-y-2">
-              <Label htmlFor="medName">Medication</Label>
+              <Label htmlFor="medName">Ilaçi</Label>
               <Input
                 id="medName"
                 placeholder="e.g., Amoxicillin"
@@ -63,7 +63,7 @@ export function MedicationsSection() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="dosage">Dosage</Label>
+              <Label htmlFor="dosage">Doza</Label>
               <Input
                 id="dosage"
                 placeholder="e.g., 500mg"
@@ -72,7 +72,7 @@ export function MedicationsSection() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="frequency">Frequency</Label>
+              <Label htmlFor="frequency">Shpeshtësia</Label>
               <Input
                 id="frequency"
                 placeholder="e.g., 3x daily"
@@ -81,17 +81,17 @@ export function MedicationsSection() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="route">Route</Label>
+              <Label htmlFor="route">Rruga e aplikimit</Label>
               <Select value={formData.route} onValueChange={(value) => setFormData({ ...formData, route: value })}>
                 <SelectTrigger id="route">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="oral">Oral</SelectItem>
+                  <SelectItem value="oral">Orale</SelectItem>
                   <SelectItem value="iv">IV</SelectItem>
                   <SelectItem value="im">IM</SelectItem>
                   <SelectItem value="sc">SC</SelectItem>
-                  <SelectItem value="topical">Topical</SelectItem>
+                  <SelectItem value="topical">Lokale</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -102,24 +102,24 @@ export function MedicationsSection() {
                 size="sm"
               >
                 <Plus className="mr-2 h-4 w-4" />
-                Add
+                Shto
               </Button>
             </div>
           </div>
         )}
 
         {epicrisis.medications.length === 0 ? (
-          <p className="py-8 text-center text-sm text-muted-foreground">No medications recorded yet</p>
+          <p className="py-8 text-center text-sm text-muted-foreground">Ende nuk ka terapi të regjistruar</p>
         ) : (
           <div className="rounded-lg border">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Medication</TableHead>
-                  <TableHead>Dosage</TableHead>
-                  <TableHead>Frequency</TableHead>
-                  <TableHead>Route</TableHead>
-                  <TableHead>Prescribed By</TableHead>
+                  <TableHead>Ilaçi</TableHead>
+                  <TableHead>Doza</TableHead>
+                  <TableHead>Shpeshtësia</TableHead>
+                  <TableHead>Rruga</TableHead>
+                  <TableHead>Përshkruar nga</TableHead>
                   {canEdit && <TableHead className="w-[50px]" />}
                 </TableRow>
               </TableHeader>

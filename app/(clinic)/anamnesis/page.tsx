@@ -27,7 +27,7 @@ export default function AnamnesisPage() {
   } = useClinic()
   const [isSaving, setIsSaving] = useState(false)
   const [showSavedMessage, setShowSavedMessage] = useState(false)
-  const [savedMessage, setSavedMessage] = useState("Draft saved successfully")
+  const [savedMessage, setSavedMessage] = useState("Draft-i u ruajt me sukses")
   const [errorMessage, setErrorMessage] = useState("")
 
   const canEdit = hasPermission("edit")
@@ -40,12 +40,12 @@ export default function AnamnesisPage() {
 
     try {
       await savePatientDraft()
-      setSavedMessage("Draft saved successfully")
+      setSavedMessage("Draft-i u ruajt me sukses")
       setShowSavedMessage(true)
       setTimeout(() => setShowSavedMessage(false), 3000)
     } catch (error) {
       setErrorMessage(
-        error instanceof ApiError ? error.message : "Failed to save patient draft",
+        error instanceof ApiError ? error.message : "Ruajtja e draft-it të pacientit dështoi",
       )
     } finally {
       setIsSaving(false)
@@ -64,7 +64,7 @@ export default function AnamnesisPage() {
       await confirmAdmission()
     } catch (error) {
       setErrorMessage(
-        error instanceof ApiError ? error.message : "Failed to save patient admission",
+        error instanceof ApiError ? error.message : "Ruajtja e pranimit të pacientit dështoi",
       )
     } finally {
       setIsSaving(false)
@@ -77,14 +77,14 @@ export default function AnamnesisPage() {
     <div className="mx-auto max-w-4xl space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Patient Anamnesis</h1>
-          <p className="text-muted-foreground">Register a new patient when admitted</p>
+          <h1 className="text-2xl font-bold text-foreground">Anamneza e pacientit</h1>
+          <p className="text-muted-foreground">Regjistroni pacientin e ri në momentin e pranimit</p>
         </div>
         <div className="flex items-center gap-3">
           {patient.isDischarged && (
             <div className="flex items-center gap-2 rounded-lg bg-success/10 px-4 py-2">
               <Lock className="h-4 w-4 text-success" />
-              <span className="text-sm text-success">Patient discharged, editing still allowed</span>
+              <span className="text-sm text-success">Pacienti është lëshuar, por modifikimi lejohet</span>
             </div>
           )}
           {(isPatientAdmitted || hasExistingRecord) && (
@@ -96,7 +96,7 @@ export default function AnamnesisPage() {
               }}
             >
               <Plus className="mr-2 h-4 w-4" />
-              New Patient
+              Pacient i ri
             </Button>
           )}
         </div>
@@ -119,17 +119,17 @@ export default function AnamnesisPage() {
       {/* Personal Information */}
       <Card>
         <CardHeader>
-          <CardTitle>Personal Information</CardTitle>
-          <CardDescription>Basic patient demographics</CardDescription>
+          <CardTitle>Të dhënat personale</CardTitle>
+          <CardDescription>Të dhënat bazë të pacientit</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-6 sm:grid-cols-2">
           <div className="space-y-2 sm:col-span-2">
             <Label htmlFor="fullName">
-              Full Name <span className="text-destructive">*</span>
+              Emri i plotë <span className="text-destructive">*</span>
             </Label>
             <Input
               id="fullName"
-              placeholder="Enter patient's full name"
+              placeholder="Shkruani emrin e plotë të pacientit"
               value={patient.fullName}
               onChange={(e) => updatePatient({ fullName: e.target.value })}
               disabled={!canEdit}
@@ -138,7 +138,7 @@ export default function AnamnesisPage() {
 
           <div className="space-y-2">
             <Label htmlFor="dateOfBirth">
-              Date of Birth <span className="text-destructive">*</span>
+              Data e lindjes <span className="text-destructive">*</span>
             </Label>
             <Input
               id="dateOfBirth"
@@ -150,7 +150,7 @@ export default function AnamnesisPage() {
           </div>
 
           <div className="space-y-2">
-            <Label>Gender</Label>
+            <Label>Gjinia</Label>
             <RadioGroup
               value={patient.gender}
               onValueChange={(value: "male" | "female" | "other") => updatePatient({ gender: value })}
@@ -160,29 +160,29 @@ export default function AnamnesisPage() {
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="male" id="male" />
                 <Label htmlFor="male" className="font-normal">
-                  Male
+                  Mashkull
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="female" id="female" />
                 <Label htmlFor="female" className="font-normal">
-                  Female
+                  Femër
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="other" id="other" />
                 <Label htmlFor="other" className="font-normal">
-                  Other
+                  Tjetër
                 </Label>
               </div>
             </RadioGroup>
           </div>
 
           <div className="space-y-2 sm:col-span-2">
-            <Label htmlFor="address">Address</Label>
+            <Label htmlFor="address">Adresa</Label>
             <Input
               id="address"
-              placeholder="Enter patient's address"
+              placeholder="Shkruani adresën e pacientit"
               value={patient.address}
               onChange={(e) => updatePatient({ address: e.target.value })}
               disabled={!canEdit}
@@ -190,7 +190,7 @@ export default function AnamnesisPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="phone">Phone</Label>
+            <Label htmlFor="phone">Telefoni</Label>
             <Input
               id="phone"
               type="tel"
@@ -202,10 +202,10 @@ export default function AnamnesisPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="emergencyContact">Emergency Contact</Label>
+            <Label htmlFor="emergencyContact">Kontakt emergjent</Label>
             <Input
               id="emergencyContact"
-              placeholder="Name and phone number"
+              placeholder="Emri dhe numri i telefonit"
               value={patient.emergencyContact}
               onChange={(e) => updatePatient({ emergencyContact: e.target.value })}
               disabled={!canEdit}
@@ -217,12 +217,12 @@ export default function AnamnesisPage() {
       {/* Admission Details */}
       <Card>
         <CardHeader>
-          <CardTitle>Admission Details</CardTitle>
-          <CardDescription>Information about the current admission</CardDescription>
+          <CardTitle>Detajet e pranimit</CardTitle>
+          <CardDescription>Informacion për pranimin aktual</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-6 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="admissionSource">Admission Source</Label>
+            <Label htmlFor="admissionSource">Burimi i pranimit</Label>
             <Select
               value={patient.admissionSource}
               onValueChange={(value: "ED" | "Clinic") => updatePatient({ admissionSource: value })}
@@ -232,14 +232,14 @@ export default function AnamnesisPage() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ED">Emergency Department</SelectItem>
-                <SelectItem value="Clinic">Clinic</SelectItem>
+                <SelectItem value="ED">Urgjenca</SelectItem>
+                <SelectItem value="Clinic">Klinika</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="admissionDateTime">Admission Date & Time</Label>
+            <Label htmlFor="admissionDateTime">Data dhe ora e pranimit</Label>
             <Input
               id="admissionDateTime"
               type="datetime-local"
@@ -251,11 +251,11 @@ export default function AnamnesisPage() {
 
           <div className="space-y-2 sm:col-span-2">
             <Label htmlFor="reasonForAdmission">
-              Reason for Admission <span className="text-destructive">*</span>
+              Arsyeja e pranimit <span className="text-destructive">*</span>
             </Label>
             <Textarea
               id="reasonForAdmission"
-              placeholder="Describe the reason for admission"
+              placeholder="Përshkruani arsyen e pranimit"
               value={patient.reasonForAdmission}
               onChange={(e) => updatePatient({ reasonForAdmission: e.target.value })}
               disabled={!canEdit}
@@ -268,15 +268,15 @@ export default function AnamnesisPage() {
       {/* Medical History */}
       <Card>
         <CardHeader>
-          <CardTitle>Medical History</CardTitle>
-          <CardDescription>Patient&apos;s medical background</CardDescription>
+          <CardTitle>Historia mjekësore</CardTitle>
+          <CardDescription>Prapavija mjekësore e pacientit</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-6">
           <div className="space-y-2">
-            <Label htmlFor="pastMedicalHistory">Past Medical History</Label>
+            <Label htmlFor="pastMedicalHistory">Historia e kaluar mjekësore</Label>
             <Textarea
               id="pastMedicalHistory"
-              placeholder="Previous conditions, surgeries, hospitalizations..."
+              placeholder="Sëmundje të mëparshme, operacione, hospitalizime..."
               value={patient.pastMedicalHistory}
               onChange={(e) => updatePatient({ pastMedicalHistory: e.target.value })}
               disabled={!canEdit}
@@ -285,10 +285,10 @@ export default function AnamnesisPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="allergies">Allergies</Label>
+            <Label htmlFor="allergies">Alergjitë</Label>
             <Textarea
               id="allergies"
-              placeholder="List any known allergies (medications, food, environmental)..."
+              placeholder="Shkruani alergjitë e njohura (ilaçe, ushqime, mjedis)..."
               value={patient.allergies}
               onChange={(e) => updatePatient({ allergies: e.target.value })}
               disabled={!canEdit}
@@ -297,10 +297,10 @@ export default function AnamnesisPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="currentMedications">Current Medications</Label>
+            <Label htmlFor="currentMedications">Barnat aktuale</Label>
             <Textarea
               id="currentMedications"
-              placeholder="List current medications with dosages..."
+              placeholder="Shkruani barnat aktuale me dozat..."
               value={patient.currentMedications}
               onChange={(e) => updatePatient({ currentMedications: e.target.value })}
               disabled={!canEdit}
@@ -315,20 +315,20 @@ export default function AnamnesisPage() {
         <div className="flex items-center justify-between rounded-lg border bg-card p-4">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <AlertCircle className="h-4 w-4" />
-            <span>Fields marked with * are required for admission</span>
+            <span>Fushat me * janë të detyrueshme për pranim</span>
           </div>
           <div className="flex gap-3">
             <Button variant="outline" onClick={handleSaveDraft} disabled={isSaving}>
               <Save className="mr-2 h-4 w-4" />
-              {isSaving ? "Saving..." : isDraftRecord || !hasExistingRecord ? "Save Draft" : "Save Changes"}
+              {isSaving ? "Duke ruajtur..." : isDraftRecord || !hasExistingRecord ? "Ruaj draftin" : "Ruaj ndryshimet"}
             </Button>
             {!patient.isDischarged && !isPatientAdmitted && (
               <Button onClick={handleConfirmAdmission} disabled={!isFormValid || isSaving}>
                 <CheckCircle className="mr-2 h-4 w-4" />
-                Confirm Admission
+                Konfirmo pranimin
               </Button>
             )}
-            {isPatientAdmitted && <Button onClick={() => router.push("/epicrisis")}>Continue to Epicrisis</Button>}
+            {isPatientAdmitted && <Button onClick={() => router.push("/epicrisis")}>Vazhdo te epikriza</Button>}
           </div>
         </div>
       )}

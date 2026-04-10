@@ -18,17 +18,17 @@ const statusConfig: Record<
   { label: string; className: string }
 > = {
   draft: { label: "Draft", className: "bg-muted text-muted-foreground" },
-  admitted: { label: "Admitted", className: "bg-info text-info-foreground" },
+  admitted: { label: "I pranuar", className: "bg-info text-info-foreground" },
   "in-treatment": {
-    label: "In Treatment",
+    label: "Në trajtim",
     className: "bg-warning text-warning-foreground",
   },
   operated: {
-    label: "Operated",
+    label: "I operuar",
     className: "bg-primary text-primary-foreground",
   },
   discharged: {
-    label: "Discharged",
+    label: "I lëshuar",
     className: "bg-success text-success-foreground",
   },
 };
@@ -52,10 +52,10 @@ export function PatientHeader() {
             </div>
             <div>
               <p className="text-sm text-muted-foreground">
-                No patient admitted
+                Nuk ka pacient aktiv
               </p>
               <p className="text-xs text-muted-foreground/70">
-                Complete anamnesis to admit a patient
+                Plotësoni anamnezën për të pranuar pacientin
               </p>
             </div>
           </div>
@@ -105,7 +105,7 @@ export function PatientHeader() {
           <div>
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
               <h2 className="text-lg font-semibold">
-                {patient.fullName || "Patient Name"}
+                {patient.fullName || "Emri i pacientit"}
               </h2>
               <Badge className={cn("w-fit", status.className)}>
                 {status.label}
@@ -116,7 +116,7 @@ export function PatientHeader() {
               {patient.dateOfBirth && (
                 <span className="flex items-center gap-1">
                   <Calendar className="h-3 w-3" />
-                  DOB: {new Date(patient.dateOfBirth).toLocaleDateString()}
+                  Datëlindja: {new Date(patient.dateOfBirth).toLocaleDateString()}
                 </span>
               )}
             </div>

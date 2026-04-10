@@ -64,6 +64,12 @@ interface StaffFormState {
 }
 
 const ROLE_OPTIONS: DoctorRole[] = ["Admin", "Main Surgeon", "Doctor", "Nurse"];
+const ROLE_LABELS: Record<DoctorRole, string> = {
+  Admin: "Admin",
+  "Main Surgeon": "Kirurgu kryesor",
+  Doctor: "Mjek",
+  Nurse: "Infermier/e",
+};
 
 const EMPTY_FORM: StaffFormState = {
   name: "",
@@ -98,7 +104,7 @@ function RoleCheckboxGroup({
             checked={selectedRoles.includes(role)}
             onCheckedChange={() => onChange(toggleRoleInList(selectedRoles, role))}
           />
-          <span className="font-medium">{role}</span>
+          <span className="font-medium">{ROLE_LABELS[role]}</span>
         </label>
       ))}
     </div>
@@ -126,7 +132,7 @@ export default function DoctorsAdminPage() {
       const data = await apiRequest<StaffUser[]>("/users", { token });
       setUsers(data);
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Failed to fetch users");
+      setError(e instanceof Error ? e.message : "Marrja e përdoruesve dështoi");
     } finally {
       setLoading(false);
     }
@@ -153,11 +159,11 @@ export default function DoctorsAdminPage() {
       !formData.email ||
       !formData.password
     ) {
-      setError("Complete all profile and login fields before creating staff.");
+      setError("Plotësoni të gjitha fushat e profilit dhe hyrjes para krijimit të stafit.");
       return;
     }
     if (formData.roles.length === 0) {
-      setError("Select at least one role.");
+      setError("Zgjidhni të paktën një rol.");
       return;
     }
 
@@ -172,12 +178,12 @@ export default function DoctorsAdminPage() {
       });
       setFormData(EMPTY_FORM);
       setSuccess(
-        `Created ${created.name} with roles: ${created.roles.join(", ")}.`,
+        `U krijua ${created.name} me rolet: ${created.roles.join(", ")}.`,
       );
       await Promise.all([loadUsers(), refreshDoctors()]);
     } catch (e) {
       setError(
-        e instanceof Error ? e.message : "Failed to create staff account",
+        e instanceof Error ? e.message : "Krijimi i llogarisë së stafit dështoi",
       );
     } finally {
       setSubmitting(false);
@@ -199,11 +205,11 @@ export default function DoctorsAdminPage() {
   const handleEditStaff = async () => {
     if (!editingUser) return;
     if (!editForm.name || !editForm.specialty || !editForm.email) {
-      setError("Name, specialty, email, and at least one role are required.");
+      setError("Emri, specializimi, email-i dhe të paktën një rol janë të detyrueshme.");
       return;
     }
     if (editForm.roles.length === 0) {
-      setError("Select at least one role.");
+      setError("Zgjidhni të paktën një rol.");
       return;
     }
 
@@ -227,11 +233,11 @@ export default function DoctorsAdminPage() {
         body: payload,
       });
       setEditingUser(null);
-      setSuccess(`Updated ${editForm.name}.`);
+      setSuccess(`U përditësua ${editForm.name}.`);
       await Promise.all([loadUsers(), refreshDoctors()]);
     } catch (e) {
       setError(
-        e instanceof Error ? e.message : "Failed to update staff account",
+        e instanceof Error ? e.message : "Përditësimi i llogarisë së stafit dështoi",
       );
     } finally {
       setSubmitting(false);
@@ -250,11 +256,11 @@ export default function DoctorsAdminPage() {
         token,
       });
       setDeleteTarget(null);
-      setSuccess(`Deleted ${deleteTarget.email}.`);
+      setSuccess(`U fshi ${deleteTarget.email}.`);
       await Promise.all([loadUsers(), refreshDoctors()]);
     } catch (e) {
       setError(
-        e instanceof Error ? e.message : "Failed to delete staff account",
+        e instanceof Error ? e.message : "Fshirja e llogarisë së stafit dështoi",
       );
     } finally {
       setSubmitting(false);
@@ -264,7 +270,7 @@ export default function DoctorsAdminPage() {
   if (!hasPermission("manage-doctors")) {
     return (
       <div className="p-6 text-muted-foreground">
-        You do not have permission to view this page.
+        Nuk keni leje për të parë këtë faqe.
       </div>
     );
   }
@@ -273,12 +279,10 @@ export default function DoctorsAdminPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-semibold tracking-tight">
-          Staff Administration
+          Administrimi i stafit
         </h1>
         <p className="max-w-3xl text-sm text-muted-foreground">
-          Create staff login accounts, assign multiple permissions with
-          checkboxes, edit profile details, and remove accounts when they are no
-          longer needed.
+          Krijoni llogari hyrëse për stafin, caktoni leje të shumta me kutiza zgjedhjeje, modifikoni profilin dhe fshini llogaritë kur nuk nevojiten më.
         </p>
       </div>
 
@@ -287,34 +291,34 @@ export default function DoctorsAdminPage() {
           <div>
             <CardTitle className="flex items-center gap-2">
               <ShieldPlus className="h-5 w-5 text-primary" />
-              Create Staff Account
+              Krijo llogari të stafit
             </CardTitle>
             <CardDescription>
-              One action creates the login, doctor profile, and permission set.
+              Me një veprim krijohen hyrja, profili i mjekut dhe lejet.
             </CardDescription>
           </div>
           <Badge variant="outline" className="w-fit border-primary/20 bg-primary/5 text-primary">
-            Admin Only
+            Vetëm Admin
           </Badge>
         </CardHeader>
         <CardContent className="space-y-5">
           {error ? (
             <Alert variant="destructive">
-              <AlertTitle>Action failed</AlertTitle>
+              <AlertTitle>Veprimi dështoi</AlertTitle>
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           ) : null}
 
           {success ? (
             <Alert className="border-success/20 bg-success/5 text-success">
-              <AlertTitle>Completed</AlertTitle>
+              <AlertTitle>U përfundua</AlertTitle>
               <AlertDescription>{success}</AlertDescription>
             </Alert>
           ) : null}
 
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="staffName">Full Name</Label>
+              <Label htmlFor="staffName">Emri i plotë</Label>
               <Input
                 id="staffName"
                 placeholder="Dr. Elena Markovic"
@@ -325,7 +329,7 @@ export default function DoctorsAdminPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="staffSpecialty">Specialty / Department</Label>
+              <Label htmlFor="staffSpecialty">Specializimi / Reparti</Label>
               <Input
                 id="staffSpecialty"
                 placeholder="Orthopedic Surgery"
@@ -339,7 +343,7 @@ export default function DoctorsAdminPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="staffEmail">Login Email</Label>
+              <Label htmlFor="staffEmail">Email-i për hyrje</Label>
               <Input
                 id="staffEmail"
                 type="email"
@@ -351,11 +355,11 @@ export default function DoctorsAdminPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="staffPassword">Temporary Password</Label>
+              <Label htmlFor="staffPassword">Fjalëkalimi i përkohshëm</Label>
               <Input
                 id="staffPassword"
                 type="password"
-                placeholder="Minimum 10 characters"
+                placeholder="Minimumi 10 karaktere"
                 value={formData.password}
                 onChange={(e) =>
                   setFormData((current) => ({
@@ -368,7 +372,7 @@ export default function DoctorsAdminPage() {
           </div>
 
           <div className="space-y-3">
-            <Label>Permissions</Label>
+            <Label>Lejet</Label>
             <RoleCheckboxGroup
               selectedRoles={formData.roles}
               onChange={(roles) =>
@@ -380,7 +384,7 @@ export default function DoctorsAdminPage() {
           <div className="flex justify-end">
             <Button onClick={handleCreateStaff} disabled={submitting}>
               <UserRoundPlus className="mr-2 h-4 w-4" />
-              {submitting ? "Saving..." : "Create Staff Login"}
+              {submitting ? "Duke ruajtur..." : "Krijo hyrje për stafin"}
             </Button>
           </div>
         </CardContent>
@@ -388,25 +392,24 @@ export default function DoctorsAdminPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Existing Staff Accounts</CardTitle>
+          <CardTitle>Llogaritë ekzistuese të stafit</CardTitle>
           <CardDescription>
-            Edit login details, adjust permissions with checkboxes, or delete a
-            user from the end of the row.
+            Modifikoni të dhënat e hyrjes, rregulloni lejet me kutiza ose fshini përdoruesin nga fundi i rreshtit.
           </CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
-            <p>Loading users...</p>
+            <p>Duke ngarkuar përdoruesit...</p>
           ) : (
             <div className="rounded-md border">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Staff Member</TableHead>
-                    <TableHead>Login</TableHead>
-                    <TableHead>Permissions</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="w-[180px] text-right">Actions</TableHead>
+                    <TableHead>Anëtari i stafit</TableHead>
+                    <TableHead>Hyrja</TableHead>
+                    <TableHead>Lejet</TableHead>
+                    <TableHead>Statusi</TableHead>
+                    <TableHead className="w-[180px] text-right">Veprimet</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -414,9 +417,9 @@ export default function DoctorsAdminPage() {
                     <TableRow key={user.id}>
                       <TableCell>
                         <div className="space-y-1">
-                          <p className="font-medium">{user.name || "Unlinked staff profile"}</p>
+                          <p className="font-medium">{user.name || "Profil stafi i palidhur"}</p>
                           <p className="text-sm text-muted-foreground">
-                            {user.specialty || "No specialty"}{" "}
+                            {user.specialty || "Pa specializim"}{" "}
                             {user.doctor_id ? `• ${user.doctor_id}` : ""}
                           </p>
                         </div>
@@ -426,7 +429,7 @@ export default function DoctorsAdminPage() {
                           <p className="font-medium">{user.email}</p>
                           <p className="text-xs text-muted-foreground">
                             USR-{user.id.toString().padStart(4, "0")}
-                            {user.id === currentUserId ? " • You" : ""}
+                            {user.id === currentUserId ? " • Ju" : ""}
                           </p>
                         </div>
                       </TableCell>
@@ -434,7 +437,7 @@ export default function DoctorsAdminPage() {
                         <div className="flex flex-wrap gap-2">
                           {user.roles.map((role) => (
                             <Badge key={`${user.id}-${role}`} variant="secondary">
-                              {role}
+                              {ROLE_LABELS[role]}
                             </Badge>
                           ))}
                         </div>
@@ -444,7 +447,7 @@ export default function DoctorsAdminPage() {
                           variant="outline"
                           className="border-success/20 bg-success/5 text-success"
                         >
-                          Active
+                          Aktiv
                         </Badge>
                       </TableCell>
                       <TableCell>
@@ -455,7 +458,7 @@ export default function DoctorsAdminPage() {
                             onClick={() => openEditDialog(user)}
                           >
                             <Pencil className="mr-2 h-4 w-4" />
-                            Edit
+                            Ndrysho
                           </Button>
                           <Button
                             variant="outline"
@@ -465,7 +468,7 @@ export default function DoctorsAdminPage() {
                             disabled={user.id === currentUserId}
                           >
                             <Trash2 className="mr-2 h-4 w-4" />
-                            Delete
+                            Fshi
                           </Button>
                         </div>
                       </TableCell>
@@ -481,15 +484,15 @@ export default function DoctorsAdminPage() {
       <Dialog open={Boolean(editingUser)} onOpenChange={(open) => !open && setEditingUser(null)}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Edit Staff Account</DialogTitle>
+            <DialogTitle>Ndrysho llogarinë e stafit</DialogTitle>
             <DialogDescription>
-              Update profile information, login email, password, and checkbox permissions.
+              Përditësoni profilin, email-in e hyrjes, fjalëkalimin dhe lejet.
             </DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="editName">Full Name</Label>
+              <Label htmlFor="editName">Emri i plotë</Label>
               <Input
                 id="editName"
                 value={editForm.name}
@@ -499,7 +502,7 @@ export default function DoctorsAdminPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="editSpecialty">Specialty</Label>
+              <Label htmlFor="editSpecialty">Specializimi</Label>
               <Input
                 id="editSpecialty"
                 value={editForm.specialty}
@@ -512,7 +515,7 @@ export default function DoctorsAdminPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="editEmail">Login Email</Label>
+              <Label htmlFor="editEmail">Email-i për hyrje</Label>
               <Input
                 id="editEmail"
                 type="email"
@@ -523,11 +526,11 @@ export default function DoctorsAdminPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="editPassword">New Password</Label>
+              <Label htmlFor="editPassword">Fjalëkalimi i ri</Label>
               <Input
                 id="editPassword"
                 type="password"
-                placeholder="Leave blank to keep current password"
+                placeholder="Lëreni bosh për të mbajtur fjalëkalimin aktual"
                 value={editForm.password}
                 onChange={(e) =>
                   setEditForm((current) => ({
@@ -540,7 +543,7 @@ export default function DoctorsAdminPage() {
           </div>
 
           <div className="space-y-3">
-            <Label>Permissions</Label>
+            <Label>Lejet</Label>
             <RoleCheckboxGroup
               selectedRoles={editForm.roles}
               onChange={(roles) =>
@@ -551,10 +554,10 @@ export default function DoctorsAdminPage() {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditingUser(null)}>
-              Cancel
+              Anulo
             </Button>
             <Button onClick={handleEditStaff} disabled={submitting}>
-              Save Changes
+              Ruaj ndryshimet
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -563,22 +566,21 @@ export default function DoctorsAdminPage() {
       <Dialog open={Boolean(deleteTarget)} onOpenChange={(open) => !open && setDeleteTarget(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Staff Account</DialogTitle>
+            <DialogTitle>Fshi llogarinë e stafit</DialogTitle>
             <DialogDescription>
-              This will remove the login account and linked doctor profile for{" "}
-              {deleteTarget?.email}. This action cannot be undone.
+              Kjo do të fshijë llogarinë e hyrjes dhe profilin e lidhur të mjekut për {deleteTarget?.email}. Ky veprim nuk mund të kthehet prapa.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteTarget(null)}>
-              Cancel
+              Anulo
             </Button>
             <Button
               variant="destructive"
               onClick={handleDeleteStaff}
               disabled={submitting}
             >
-              Delete User
+              Fshi përdoruesin
             </Button>
           </DialogFooter>
         </DialogContent>

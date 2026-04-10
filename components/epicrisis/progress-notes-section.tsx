@@ -33,28 +33,28 @@ export function ProgressNotesSection() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Daily Progress Notes</CardTitle>
-        <CardDescription>Document patient progress during hospitalization</CardDescription>
+        <CardTitle>Shënime ditore të ecurisë</CardTitle>
+        <CardDescription>Dokumentoni ecurinë e pacientit gjatë hospitalizimit</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {canEdit && (
           <div className="space-y-3">
             <Textarea
-              placeholder="Enter progress note..."
+              placeholder="Shkruani shënimin e ecurisë..."
               value={newNote}
               onChange={(e) => setNewNote(e.target.value)}
               rows={3}
             />
             <Button onClick={handleAddNote} disabled={!newNote.trim()} size="sm">
               <Plus className="mr-2 h-4 w-4" />
-              Add Note
+              Shto shënim
             </Button>
           </div>
         )}
 
         <div className="space-y-3">
           {epicrisis.progressNotes.length === 0 ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">No progress notes recorded yet</p>
+            <p className="py-8 text-center text-sm text-muted-foreground">Ende nuk ka shënime të regjistruara</p>
           ) : (
             epicrisis.progressNotes.map((note) => (
               <div key={note.id} className="rounded-lg border bg-muted/30 p-4">
@@ -65,7 +65,7 @@ export function ProgressNotesSection() {
                   </span>
                   <span className="flex items-center gap-1">
                     <Clock className="h-3 w-3" />
-                    {note.date} at {note.time}
+                    {note.date} në {note.time}
                   </span>
                   <span className="font-mono text-xs">{note.doctorId}</span>
                 </div>

@@ -28,10 +28,10 @@ export default function LoginPage() {
       if (success) {
         router.replace("/anamnesis");
       } else {
-        setError("Invalid email or password.");
+        setError("Email-i ose fjalëkalimi nuk është i saktë.");
       }
     } catch {
-      setError("An unexpected error occurred during login.");
+      setError("Ndodhi një gabim i papritur gjatë hyrjes.");
     } finally {
       setLoading(false);
     }
@@ -44,9 +44,9 @@ export default function LoginPage() {
           <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
             <Activity className="h-6 w-6 text-primary" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">Welcome back</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Mirë se u kthyet</h1>
           <p className="text-sm text-muted-foreground">
-            Log in to your Ortopedia Clinic workspace
+            Hyni në hapësirën tuaj të Klinikës së Ortopedisë
           </p>
         </div>
 
@@ -65,7 +65,7 @@ export default function LoginPage() {
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">Fjalëkalimi</Label>
               </div>
               <Input
                 id="password"
@@ -83,16 +83,16 @@ export default function LoginPage() {
           )}
 
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Logging in..." : "Log in"}
+            {loading ? "Duke hyrë..." : "Hyr"}
           </Button>
 
           <p className="text-center text-sm text-muted-foreground">
-            Don&apos;t have an account?{" "}
+            Nuk keni llogari?{" "}
             <Link
               href="/register"
               className="font-semibold text-primary hover:underline"
             >
-              Register
+              Regjistrohu
             </Link>
           </p>
         </form>

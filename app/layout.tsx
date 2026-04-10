@@ -5,11 +5,11 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Ortopedia Clinic",
-    template: "%s | Ortopedia Clinic",
+    default: "Klinika e Ortopedisë",
+    template: "%s | Klinika e Ortopedisë",
   },
   description:
-    "Orthopedic clinic workspace for admissions, surgery coordination, patient records, and discharge workflows.",
+    "Platformë klinike për pranime, koordinim operacionesh, kartela pacientësh dhe dokumente lëshimi.",
   icons: {
     icon: [
       {
@@ -27,13 +27,13 @@ export const metadata: Metadata = {
     ],
     apple: "/apple-icon.png",
   },
-  applicationName: "Ortopedia Clinic",
+  applicationName: "Klinika e Ortopedisë",
   keywords: [
-    "orthopedics",
-    "clinic",
-    "ehr",
-    "patient workflow",
-    "hospital operations",
+    "ortopedi",
+    "klinikë",
+    "kartela mjekësore",
+    "rrjedha e pacientit",
+    "operacionet spitalore",
   ],
 };
 
@@ -45,7 +45,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="sq">
       <body className="min-h-screen font-sans antialiased">
         <ClinicProvider>{children}</ClinicProvider>
         <Analytics />

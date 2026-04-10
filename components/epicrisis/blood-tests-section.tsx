@@ -44,14 +44,14 @@ export function BloodTestsSection() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Blood Tests</CardTitle>
-        <CardDescription>Laboratory test results</CardDescription>
+        <CardTitle>Analizat e gjakut</CardTitle>
+        <CardDescription>Rezultatet laboratorike</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {canEdit && (
           <div className="grid gap-3 sm:grid-cols-5">
             <div className="space-y-2">
-              <Label htmlFor="testName">Test Name</Label>
+              <Label htmlFor="testName">Emri i analizës</Label>
               <Input
                 id="testName"
                 placeholder="e.g., Hemoglobin"
@@ -60,7 +60,7 @@ export function BloodTestsSection() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="value">Value</Label>
+              <Label htmlFor="value">Vlera</Label>
               <Input
                 id="value"
                 placeholder="e.g., 14.5"
@@ -69,7 +69,7 @@ export function BloodTestsSection() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="unit">Unit</Label>
+              <Label htmlFor="unit">Njësia</Label>
               <Input
                 id="unit"
                 placeholder="e.g., g/dL"
@@ -78,7 +78,7 @@ export function BloodTestsSection() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="refRange">Reference Range</Label>
+              <Label htmlFor="refRange">Vlera referente</Label>
               <Input
                 id="refRange"
                 placeholder="e.g., 12-16"
@@ -89,23 +89,23 @@ export function BloodTestsSection() {
             <div className="flex items-end">
               <Button onClick={handleAddTest} disabled={!formData.testName.trim() || !formData.value.trim()} size="sm">
                 <Plus className="mr-2 h-4 w-4" />
-                Add
+                Shto
               </Button>
             </div>
           </div>
         )}
 
         {epicrisis.bloodTests.length === 0 ? (
-          <p className="py-8 text-center text-sm text-muted-foreground">No blood tests recorded yet</p>
+          <p className="py-8 text-center text-sm text-muted-foreground">Ende nuk ka analiza të regjistruara</p>
         ) : (
           <div className="rounded-lg border">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Test Name</TableHead>
-                  <TableHead>Value</TableHead>
-                  <TableHead>Reference Range</TableHead>
-                  <TableHead>Date</TableHead>
+                  <TableHead>Analiza</TableHead>
+                  <TableHead>Vlera</TableHead>
+                  <TableHead>Vlera referente</TableHead>
+                  <TableHead>Data</TableHead>
                   {canEdit && <TableHead className="w-[50px]" />}
                 </TableRow>
               </TableHeader>

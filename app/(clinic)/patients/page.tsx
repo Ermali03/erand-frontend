@@ -52,7 +52,7 @@ export default function PatientsDashboardPage() {
       const data = await apiRequest<PatientRecord[]>("/patients", { token });
       setPatients(data);
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Failed to fetch patients");
+      setError(e instanceof Error ? e.message : "Marrja e pacientëve dështoi");
     } finally {
       setLoading(false);
     }
@@ -79,7 +79,7 @@ export default function PatientsDashboardPage() {
         ),
       );
     } catch (e) {
-      console.error("Failed to update patient", e);
+      console.error("Përditësimi i pacientit dështoi", e);
     }
   };
 
@@ -91,7 +91,7 @@ export default function PatientsDashboardPage() {
       await loadPatientIntoWorkflow(patientId);
       router.push("/anamnesis");
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Failed to open patient form");
+      setError(e instanceof Error ? e.message : "Hapja e formularit të pacientit dështoi");
     } finally {
       setEditingPatientId(null);
     }
@@ -100,7 +100,7 @@ export default function PatientsDashboardPage() {
   if (!hasPermission("view")) {
     return (
       <div className="p-6 text-muted-foreground">
-        You do not have permission to view patient records.
+        Nuk keni leje për të parë kartelat e pacientëve.
       </div>
     );
   }
@@ -109,9 +109,9 @@ export default function PatientsDashboardPage() {
     <div className="mx-auto max-w-5xl space-y-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">All Patients</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Të gjithë pacientët</h1>
           <p className="text-sm text-muted-foreground">
-            Overview of all active and historical patient records.
+            Pasqyrë e të gjitha kartelave aktive dhe historike të pacientëve.
           </p>
         </div>
         {hasPermission("edit") && (
@@ -122,7 +122,7 @@ export default function PatientsDashboardPage() {
             }}
           >
             <Plus className="mr-2 h-4 w-4" />
-            New Patient
+            Pacient i ri
           </Button>
         )}
       </div>
@@ -130,7 +130,7 @@ export default function PatientsDashboardPage() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Records</CardTitle>
+            <CardTitle className="text-sm font-medium">Gjithsej kartela</CardTitle>
             <UsersIcon className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -139,7 +139,7 @@ export default function PatientsDashboardPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Draft / Active</CardTitle>
+            <CardTitle className="text-sm font-medium">Draft / Aktive</CardTitle>
             <Activity className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
@@ -158,7 +158,7 @@ export default function PatientsDashboardPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Discharged</CardTitle>
+            <CardTitle className="text-sm font-medium">Të lëshuar</CardTitle>
             <CheckCircleIcon className="h-4 w-4 text-success" />
           </CardHeader>
           <CardContent>
@@ -170,7 +170,7 @@ export default function PatientsDashboardPage() {
       </div>
 
       {loading ? (
-        <p>Loading patient records...</p>
+        <p>Duke ngarkuar kartelat e pacientëve...</p>
       ) : error ? (
         <p className="text-destructive">{error}</p>
       ) : (
@@ -178,11 +178,11 @@ export default function PatientsDashboardPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Patient ID</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead className="w-[180px]">Operations</TableHead>
-                <TableHead className="w-[180px]">Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>ID e pacientit</TableHead>
+                <TableHead>Emri</TableHead>
+                <TableHead className="w-[180px]">Operacioni</TableHead>
+                <TableHead className="w-[180px]">Statusi</TableHead>
+                <TableHead className="text-right">Veprimet</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -209,8 +209,8 @@ export default function PatientsDashboardPage() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="true">Operated</SelectItem>
-                        <SelectItem value="false">None</SelectItem>
+                        <SelectItem value="true">I operuar</SelectItem>
+                        <SelectItem value="false">Jo</SelectItem>
                       </SelectContent>
                     </Select>
                   </TableCell>
@@ -226,12 +226,12 @@ export default function PatientsDashboardPage() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="draft">Draft</SelectItem>
-                        <SelectItem value="admitted">Admitted</SelectItem>
+                        <SelectItem value="admitted">I pranuar</SelectItem>
                         <SelectItem value="in-treatment">
-                          In-Treatment
+                          Në trajtim
                         </SelectItem>
-                        <SelectItem value="operated">Operated</SelectItem>
-                        <SelectItem value="discharged">Discharged</SelectItem>
+                        <SelectItem value="operated">I operuar</SelectItem>
+                        <SelectItem value="discharged">I lëshuar</SelectItem>
                       </SelectContent>
                     </Select>
                   </TableCell>
@@ -243,7 +243,7 @@ export default function PatientsDashboardPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        aria-label={`Edit ${p.full_name}`}
+                        aria-label={`Ndrysho ${p.full_name}`}
                         disabled={editingPatientId === p.id}
                         onClick={() => void handleEditPatient(p.id)}
                       >
@@ -252,7 +252,7 @@ export default function PatientsDashboardPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        aria-label={`Print ${p.full_name}`}
+                        aria-label={`Printo ${p.full_name}`}
                         onClick={() =>
                           window.open(`/patients/${p.id}?print=1`, "_blank")
                         }
@@ -269,7 +269,7 @@ export default function PatientsDashboardPage() {
                     colSpan={5}
                     className="h-24 text-center text-muted-foreground"
                   >
-                    No patients found.
+                    Nuk u gjet asnjë pacient.
                   </TableCell>
                 </TableRow>
               )}

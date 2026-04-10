@@ -15,7 +15,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { useClinic } from "@/lib/clinic-context";
-import { apiRequest } from "@/lib/api";
 import {
   AnamnesisSummary,
   EpicrisisSummary,
@@ -43,10 +42,12 @@ export default function DischargePage() {
     epicrisis,
     surgery,
     currentDoctor,
-    token,
     dischargeReport,
     updateDischargeReport,
     dischargePatient,
+    saveEpicrisisRecord,
+    saveSurgeryRecord,
+    saveDischargeRecord,
     hasPermission,
     resetAll,
   } = useClinic();
@@ -65,36 +66,9 @@ export default function DischargePage() {
     ) {
       return;
     }
-    if (token && patient.id) {
-      const instructions = [
-        `Diagnoza finale: ${dischargeReport.finalDiagnosis}`,
-        "",
-        "Terapia:",
-        dischargeReport.therapyForHome,
-        "",
-        "Udhezimet:",
-        dischargeReport.followUpInstructions,
-      ].join("\n");
-
-      try {
-        await apiRequest("/discharge", {
-          method: "POST",
-          token,
-          body: {
-            patient_id: patient.id,
-            discharge_date:
-              dischargeReport.dischargeDate || new Date().toISOString(),
-            instructions,
-          },
-        });
-      } catch {
-        await apiRequest(`/patients/${patient.id}`, {
-          method: "PUT",
-          token,
-          body: { status: "discharged" },
-        }).catch(() => undefined);
-      }
-    }
+    await saveEpicrisisRecord();
+    await saveSurgeryRecord();
+    await saveDischargeRecord();
     dischargePatient();
   };
 

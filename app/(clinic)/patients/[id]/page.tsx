@@ -132,6 +132,8 @@ export default function PatientDetailsPage() {
               className={
                 patient.status === "discharged"
                   ? "bg-success/10 text-success border-success/20"
+                  : patient.status === "draft"
+                    ? "bg-muted text-muted-foreground border-border"
                   : patient.status === "admitted"
                     ? "bg-primary/10 text-primary border-primary/20"
                     : "bg-warning/10 text-warning border-warning/20"

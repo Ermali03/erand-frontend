@@ -9,7 +9,7 @@ export interface AuthUser {
   roles: DoctorRole[];
 }
 
-export type PatientStatus = "admitted" | "in-treatment" | "operated" | "discharged"
+export type PatientStatus = "draft" | "admitted" | "in-treatment" | "operated" | "discharged"
 
 export type AdmissionSource = "ED" | "Clinic"
 

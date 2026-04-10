@@ -10,32 +10,65 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { useClinic } from "@/lib/clinic-context"
-import { Save, CheckCircle, AlertCircle, Lock } from "lucide-react"
+import { Save, CheckCircle, AlertCircle, Lock, Plus } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { ApiError } from "@/lib/api"
 
 export default function AnamnesisPage() {
   const router = useRouter()
-  const { patient, updatePatient, isPatientAdmitted, confirmAdmission, hasPermission } = useClinic()
+  const {
+    patient,
+    updatePatient,
+    isPatientAdmitted,
+    savePatientDraft,
+    confirmAdmission,
+    startNewPatient,
+    hasPermission,
+  } = useClinic()
   const [isSaving, setIsSaving] = useState(false)
   const [showSavedMessage, setShowSavedMessage] = useState(false)
+  const [savedMessage, setSavedMessage] = useState("Draft saved successfully")
+  const [errorMessage, setErrorMessage] = useState("")
 
   const canEdit = hasPermission("edit")
+  const hasExistingRecord = Boolean(patient.id)
+  const isDraftRecord = patient.status === "draft"
 
-  const handleSaveDraft = () => {
+  const handleSaveDraft = async () => {
     setIsSaving(true)
-    setTimeout(() => {
-      setIsSaving(false)
+    setErrorMessage("")
+
+    try {
+      await savePatientDraft()
+      setSavedMessage("Draft saved successfully")
       setShowSavedMessage(true)
       setTimeout(() => setShowSavedMessage(false), 3000)
-    }, 500)
+    } catch (error) {
+      setErrorMessage(
+        error instanceof ApiError ? error.message : "Failed to save patient draft",
+      )
+    } finally {
+      setIsSaving(false)
+    }
   }
 
-  const handleConfirmAdmission = () => {
+  const handleConfirmAdmission = async () => {
     if (!patient.fullName || !patient.dateOfBirth || !patient.reasonForAdmission) {
       return
     }
-    confirmAdmission()
-    updatePatient({ status: "in-treatment" })
+
+    setIsSaving(true)
+    setErrorMessage("")
+
+    try {
+      await confirmAdmission()
+    } catch (error) {
+      setErrorMessage(
+        error instanceof ApiError ? error.message : "Failed to save patient admission",
+      )
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   const isFormValid = patient.fullName && patient.dateOfBirth && patient.reasonForAdmission
@@ -47,18 +80,39 @@ export default function AnamnesisPage() {
           <h1 className="text-2xl font-bold text-foreground">Patient Anamnesis</h1>
           <p className="text-muted-foreground">Register a new patient when admitted</p>
         </div>
-        {patient.isDischarged && (
-          <div className="flex items-center gap-2 rounded-lg bg-success/10 px-4 py-2">
-            <Lock className="h-4 w-4 text-success" />
-            <span className="text-sm text-success">Patient discharged, editing still allowed</span>
-          </div>
-        )}
+        <div className="flex items-center gap-3">
+          {patient.isDischarged && (
+            <div className="flex items-center gap-2 rounded-lg bg-success/10 px-4 py-2">
+              <Lock className="h-4 w-4 text-success" />
+              <span className="text-sm text-success">Patient discharged, editing still allowed</span>
+            </div>
+          )}
+          {(isPatientAdmitted || hasExistingRecord) && (
+            <Button
+              variant="outline"
+              onClick={() => {
+                startNewPatient()
+                router.push("/anamnesis")
+              }}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              New Patient
+            </Button>
+          )}
+        </div>
       </div>
 
       {showSavedMessage && (
         <Alert className="border-success bg-success/10">
           <CheckCircle className="h-4 w-4 text-success" />
-          <AlertDescription className="text-success">Draft saved successfully</AlertDescription>
+          <AlertDescription className="text-success">{savedMessage}</AlertDescription>
+        </Alert>
+      )}
+
+      {errorMessage && (
+        <Alert className="border-destructive bg-destructive/10">
+          <AlertCircle className="h-4 w-4 text-destructive" />
+          <AlertDescription className="text-destructive">{errorMessage}</AlertDescription>
         </Alert>
       )}
 
@@ -266,10 +320,10 @@ export default function AnamnesisPage() {
           <div className="flex gap-3">
             <Button variant="outline" onClick={handleSaveDraft} disabled={isSaving}>
               <Save className="mr-2 h-4 w-4" />
-              {isSaving ? "Saving..." : "Save Draft"}
+              {isSaving ? "Saving..." : isDraftRecord || !hasExistingRecord ? "Save Draft" : "Save Changes"}
             </Button>
-            {!isPatientAdmitted && (
-              <Button onClick={handleConfirmAdmission} disabled={!isFormValid}>
+            {!patient.isDischarged && !isPatientAdmitted && (
+              <Button onClick={handleConfirmAdmission} disabled={!isFormValid || isSaving}>
                 <CheckCircle className="mr-2 h-4 w-4" />
                 Confirm Admission
               </Button>

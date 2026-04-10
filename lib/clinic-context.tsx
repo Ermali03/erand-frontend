@@ -38,7 +38,13 @@ interface ClinicContextType {
   setPatient: (patient: Patient) => void;
   updatePatient: (updates: Partial<Patient>) => void;
   isPatientAdmitted: boolean;
-  confirmAdmission: () => void;
+  savePatientDraft: () => Promise<void>;
+  confirmAdmission: () => Promise<void>;
+  saveEpicrisisRecord: () => Promise<void>;
+  saveSurgeryRecord: () => Promise<void>;
+  saveDischargeRecord: () => Promise<void>;
+  startNewPatient: () => void;
+  loadPatientIntoWorkflow: (patientId: string) => Promise<void>;
   epicrisis: Epicrisis;
   setEpicrisis: (epicrisis: Epicrisis) => void;
   updateEpicrisis: (updates: Partial<Epicrisis>) => void;
@@ -67,8 +73,106 @@ interface LoginResponse {
   email: string;
 }
 
+interface PatientRecordResponse {
+  id: string;
+  full_name: string;
+  date_of_birth: string | null;
+  gender?: string | null;
+  address?: string | null;
+  phone?: string | null;
+  emergency_contact?: string | null;
+  admission_source?: string | null;
+  admission_datetime?: string | null;
+  reason_for_admission?: string | null;
+  past_medical_history?: string | null;
+  allergies?: string | null;
+  current_medications?: string | null;
+  status: Patient["status"];
+  is_operated: boolean;
+}
+
+interface PatientFullResponse extends PatientRecordResponse {
+  anamnesis: {
+    chief_complaint: string;
+    medical_history: string;
+  } | null;
+  epicrisis: {
+    diagnosis: string;
+    treatment_plan: string;
+    structured_data?: string | null;
+  } | null;
+  surgery: {
+    procedure_name: string;
+    date: string;
+    notes: string;
+    surgeon_id: string;
+    structured_data?: string | null;
+  } | null;
+  discharge_report: {
+    discharge_date: string;
+    instructions: string;
+    structured_data?: string | null;
+  } | null;
+}
+
 const ClinicContext = createContext<ClinicContextType | undefined>(undefined);
 const PUBLIC_ROUTES = new Set(["/login", "/register"]);
+
+function parseStructuredData<T>(value: string | null | undefined, fallback: T): T {
+  if (!value) return fallback;
+
+  try {
+    return JSON.parse(value) as T;
+  } catch {
+    return fallback;
+  }
+}
+
+function normalizePatientStatus(status: string | null | undefined): Patient["status"] {
+  if (
+    status === "draft" ||
+    status === "admitted" ||
+    status === "in-treatment" ||
+    status === "operated" ||
+    status === "discharged"
+  ) {
+    return status;
+  }
+
+  return "draft";
+}
+
+function normalizePatientRecord(record: PatientRecordResponse): Patient {
+  const emptyPatient = createEmptyPatient();
+  const status = normalizePatientStatus(record.status);
+  const admissionSource =
+    record.admission_source === "Clinic" ? "Clinic" : "ED";
+
+  return {
+    ...emptyPatient,
+    id: record.id,
+    fullName: record.full_name ?? "",
+    dateOfBirth: record.date_of_birth ?? "",
+    gender:
+      record.gender === "female" ||
+      record.gender === "other" ||
+      record.gender === "male"
+        ? record.gender
+        : emptyPatient.gender,
+    address: record.address ?? "",
+    phone: record.phone ?? "",
+    emergencyContact: record.emergency_contact ?? "",
+    admissionSource,
+    admissionDateTime: record.admission_datetime ?? emptyPatient.admissionDateTime,
+    reasonForAdmission: record.reason_for_admission ?? "",
+    pastMedicalHistory: record.past_medical_history ?? "",
+    allergies: record.allergies ?? "",
+    currentMedications: record.current_medications ?? "",
+    status,
+    isOperated: record.is_operated,
+    isDischarged: status === "discharged",
+  };
+}
 
 export function ClinicProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
@@ -202,30 +306,214 @@ export function ClinicProvider({ children }: { children: ReactNode }) {
     [],
   );
 
-  const confirmAdmission = useCallback(() => {
-    if (!token) return;
-    const newId = generatePatientId();
-    void apiRequest<{ id: string; status: Patient["status"] }>("/patients", {
-      method: "POST",
+  const persistPatient = useCallback(
+    async (status: Patient["status"]) => {
+      if (!token) {
+        throw new Error("You must be logged in to save a patient.");
+      }
+
+      const patientPayload = {
+        full_name: patient.fullName.trim() || "Draft Patient",
+        date_of_birth: patient.dateOfBirth || null,
+        gender: patient.gender,
+        address: patient.address || null,
+        phone: patient.phone || null,
+        emergency_contact: patient.emergencyContact || null,
+        admission_source: patient.admissionSource,
+        admission_datetime: patient.admissionDateTime || null,
+        reason_for_admission: patient.reasonForAdmission || null,
+        past_medical_history: patient.pastMedicalHistory || null,
+        allergies: patient.allergies || null,
+        current_medications: patient.currentMedications || null,
+        status,
+        is_operated: patient.isOperated,
+      };
+
+      const savedPatient = patient.id
+        ? await apiRequest<PatientRecordResponse>(`/patients/${patient.id}`, {
+            method: "PUT",
+            token,
+            body: patientPayload,
+          })
+        : await apiRequest<PatientRecordResponse>("/patients", {
+            method: "POST",
+            token,
+            body: {
+              id: generatePatientId(),
+              ...patientPayload,
+            },
+          });
+
+      await apiRequest(`/anamnesis/${savedPatient.id}`, {
+        method: "PUT",
+        token,
+        body: {
+          chief_complaint: patient.reasonForAdmission || "",
+          medical_history: patient.pastMedicalHistory || "",
+        },
+      });
+
+      const normalizedPatient = normalizePatientRecord(savedPatient);
+      setPatient(normalizedPatient);
+      setIsPatientAdmitted(normalizedPatient.status !== "draft");
+
+      return normalizedPatient;
+    },
+    [patient, token],
+  );
+
+  const savePatientDraft = useCallback(async () => {
+    await persistPatient("draft");
+  }, [persistPatient]);
+
+  const confirmAdmission = useCallback(async () => {
+    const nextStatus =
+      patient.status === "discharged" ? "discharged" : "admitted";
+    await persistPatient(nextStatus);
+  }, [patient.status, persistPatient]);
+
+  const saveEpicrisisRecord = useCallback(async () => {
+    if (!token || !patient.id) return;
+
+    await apiRequest(`/epicrisis/${patient.id}`, {
+      method: "PUT",
       token,
       body: {
-        id: newId,
-        full_name: patient.fullName || "Unknown",
-        date_of_birth: patient.dateOfBirth || null,
-        status: "admitted",
-        is_operated: false,
+        diagnosis:
+          epicrisis.diagnoses.map((entry) => entry.diagnosis).join("; ") ||
+          patient.reasonForAdmission ||
+          "Not specified",
+        treatment_plan:
+          epicrisis.medications
+            .map((entry) => `${entry.name} ${entry.dosage} ${entry.frequency}`)
+            .join("; ") || "Not specified",
+        structured_data: JSON.stringify(epicrisis),
       },
-    })
-      .then((data: { id: string; status: Patient["status"] }) => {
-        setPatient((prev) => ({
-          ...prev,
-          id: data.id,
-          status: data.status,
-        }));
-        setIsPatientAdmitted(true);
-      })
-      .catch(() => undefined);
-  }, [patient, token]);
+    });
+  }, [epicrisis, patient.id, patient.reasonForAdmission, token]);
+
+  const saveSurgeryRecord = useCallback(async () => {
+    if (!token || !patient.id || !patient.isOperated) return;
+
+    const mainSurgeon = surgery.team.find((member) => member.role === "Main Surgeon");
+
+    await apiRequest(`/surgery/${patient.id}`, {
+      method: "PUT",
+      token,
+      body: {
+        patient_id: patient.id,
+        surgeon_id: mainSurgeon?.doctorId || currentDoctor.id,
+        procedure_name: surgery.surgeryType || "Not specified",
+        date: surgery.date || new Date().toISOString().slice(0, 10),
+        notes: surgery.intraoperativeNotes || "",
+        structured_data: JSON.stringify(surgery),
+      },
+    });
+  }, [currentDoctor.id, patient.id, patient.isOperated, surgery, token]);
+
+  const saveDischargeRecord = useCallback(async () => {
+    if (!token || !patient.id) return;
+
+    const instructions = [
+      `Diagnoza finale: ${dischargeReport.finalDiagnosis}`,
+      "",
+      "Terapia:",
+      dischargeReport.therapyForHome,
+      "",
+      "Udhezimet:",
+      dischargeReport.followUpInstructions,
+    ].join("\n");
+
+    await apiRequest(`/discharge/${patient.id}`, {
+      method: "PUT",
+      token,
+      body: {
+        discharge_date: dischargeReport.dischargeDate || new Date().toISOString(),
+        instructions,
+        structured_data: JSON.stringify(dischargeReport),
+      },
+    });
+  }, [dischargeReport, patient.id, token]);
+
+  const startNewPatient = useCallback(() => {
+    setPatient(createEmptyPatient());
+    setEpicrisis(createEmptyEpicrisis());
+    setSurgery(createEmptySurgery());
+    setDischargeReport(createEmptyDischargeReport());
+    setIsPatientAdmitted(false);
+  }, []);
+
+  const loadPatientIntoWorkflow = useCallback(
+    async (patientId: string) => {
+      if (!token) return;
+
+      const fullPatient = await apiRequest<PatientFullResponse>(
+        `/patients/${patientId}/full`,
+        { token },
+      );
+      const normalizedPatient = normalizePatientRecord({
+        ...fullPatient,
+        reason_for_admission:
+          fullPatient.reason_for_admission ??
+          fullPatient.anamnesis?.chief_complaint ??
+          null,
+        past_medical_history:
+          fullPatient.past_medical_history ??
+          fullPatient.anamnesis?.medical_history ??
+          null,
+      });
+
+      setPatient(normalizedPatient);
+      setEpicrisis(
+        parseStructuredData(
+          fullPatient.epicrisis?.structured_data,
+          fullPatient.epicrisis
+            ? {
+                ...createEmptyEpicrisis(),
+                diagnoses: fullPatient.epicrisis.diagnosis
+                  ? [
+                      {
+                        id: `diag-${patientId}`,
+                        doctorId: "",
+                        doctorName: "",
+                        date: "",
+                        time: "",
+                        diagnosis: fullPatient.epicrisis.diagnosis,
+                      },
+                    ]
+                  : [],
+              }
+            : createEmptyEpicrisis(),
+        ),
+      );
+      setSurgery(
+        parseStructuredData(
+          fullPatient.surgery?.structured_data,
+          fullPatient.surgery
+            ? {
+                ...createEmptySurgery(),
+                date: fullPatient.surgery.date || "",
+                surgeryType: fullPatient.surgery.procedure_name || "",
+                intraoperativeNotes: fullPatient.surgery.notes || "",
+              }
+            : createEmptySurgery(),
+        ),
+      );
+      setDischargeReport(
+        parseStructuredData(
+          fullPatient.discharge_report?.structured_data,
+          fullPatient.discharge_report
+            ? {
+                ...createEmptyDischargeReport(),
+                dischargeDate: fullPatient.discharge_report.discharge_date || "",
+              }
+            : createEmptyDischargeReport(),
+        ),
+      );
+      setIsPatientAdmitted(normalizedPatient.status !== "draft");
+    },
+    [token],
+  );
 
   const dischargePatient = useCallback(() => {
     setPatient((prev) => ({
@@ -280,7 +568,13 @@ export function ClinicProvider({ children }: { children: ReactNode }) {
         setPatient,
         updatePatient,
         isPatientAdmitted,
+        savePatientDraft,
         confirmAdmission,
+        saveEpicrisisRecord,
+        saveSurgeryRecord,
+        saveDischargeRecord,
+        startNewPatient,
+        loadPatientIntoWorkflow,
         epicrisis,
         setEpicrisis,
         updateEpicrisis,

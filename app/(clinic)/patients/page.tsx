@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Activity, Pencil, Printer } from "lucide-react";
+import { Activity, Pencil, Plus, Printer } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -39,10 +39,12 @@ interface PatientRecord {
 
 export default function PatientsDashboardPage() {
   const router = useRouter();
-  const { token, hasPermission } = useClinic();
+  const { token, hasPermission, startNewPatient, loadPatientIntoWorkflow } =
+    useClinic();
   const [patients, setPatients] = useState<PatientRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [editingPatientId, setEditingPatientId] = useState<string | null>(null);
 
   const loadPatients = useCallback(async () => {
     try {
@@ -81,6 +83,20 @@ export default function PatientsDashboardPage() {
     }
   };
 
+  const handleEditPatient = async (patientId: string) => {
+    setEditingPatientId(patientId);
+    setError("");
+
+    try {
+      await loadPatientIntoWorkflow(patientId);
+      router.push("/anamnesis");
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Failed to open patient form");
+    } finally {
+      setEditingPatientId(null);
+    }
+  };
+
   if (!hasPermission("view")) {
     return (
       <div className="p-6 text-muted-foreground">
@@ -91,11 +107,24 @@ export default function PatientsDashboardPage() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">All Patients</h1>
-        <p className="text-sm text-muted-foreground">
-          Overview of all active and historical patient records.
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">All Patients</h1>
+          <p className="text-sm text-muted-foreground">
+            Overview of all active and historical patient records.
+          </p>
+        </div>
+        {hasPermission("edit") && (
+          <Button
+            onClick={() => {
+              startNewPatient();
+              router.push("/anamnesis");
+            }}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            New Patient
+          </Button>
+        )}
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
@@ -110,16 +139,18 @@ export default function PatientsDashboardPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Admitted / In-Treatment
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Draft / Active</CardTitle>
             <Activity className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {
                 patients.filter(
-                  (p) => p.status === "admitted" || p.status === "in-treatment",
+                  (p) =>
+                    p.status === "draft" ||
+                    p.status === "admitted" ||
+                    p.status === "in-treatment" ||
+                    p.status === "operated",
                 ).length
               }
             </div>
@@ -194,10 +225,12 @@ export default function PatientsDashboardPage() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
+                        <SelectItem value="draft">Draft</SelectItem>
                         <SelectItem value="admitted">Admitted</SelectItem>
                         <SelectItem value="in-treatment">
                           In-Treatment
                         </SelectItem>
+                        <SelectItem value="operated">Operated</SelectItem>
                         <SelectItem value="discharged">Discharged</SelectItem>
                       </SelectContent>
                     </Select>
@@ -211,7 +244,8 @@ export default function PatientsDashboardPage() {
                         variant="ghost"
                         size="icon"
                         aria-label={`Edit ${p.full_name}`}
-                        onClick={() => router.push(`/patients/${p.id}`)}
+                        disabled={editingPatientId === p.id}
+                        onClick={() => void handleEditPatient(p.id)}
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>

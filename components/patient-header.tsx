@@ -17,6 +17,7 @@ const statusConfig: Record<
   PatientStatus,
   { label: string; className: string }
 > = {
+  draft: { label: "Draft", className: "bg-muted text-muted-foreground" },
   admitted: { label: "Admitted", className: "bg-info text-info-foreground" },
   "in-treatment": {
     label: "In Treatment",

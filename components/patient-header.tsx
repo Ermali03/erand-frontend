@@ -33,14 +33,42 @@ const statusConfig: Record<
   },
 };
 
+/** Attending-doctor picker shared by both header states. */
+function DoctorSelect() {
+  const { currentDoctor, setCurrentDoctor, doctors } = useClinic();
+
+  return (
+    <div className="flex items-center gap-2">
+      <Stethoscope className="h-4 w-4 text-muted-foreground" />
+      <Select
+        value={currentDoctor.id}
+        onValueChange={(id) => {
+          const doctor = doctors.find((d) => d.id === id);
+          if (doctor) setCurrentDoctor(doctor);
+        }}
+      >
+        <SelectTrigger className="w-[200px]">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {doctors.map((doctor) => (
+            <SelectItem key={doctor.id} value={doctor.id}>
+              <div className="flex flex-col">
+                <span>{doctor.name}</span>
+                <span className="text-xs text-muted-foreground">
+                  {doctor.role}
+                </span>
+              </div>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+
 export function PatientHeader() {
-  const {
-    patient,
-    isPatientAdmitted,
-    currentDoctor,
-    setCurrentDoctor,
-    doctors,
-  } = useClinic();
+  const { patient, isPatientAdmitted } = useClinic();
 
   if (!isPatientAdmitted) {
     return (
@@ -60,34 +88,7 @@ export function PatientHeader() {
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Stethoscope className="h-4 w-4 text-muted-foreground" />
-              <Select
-                value={currentDoctor.id}
-                onValueChange={(id) => {
-                  const doctor = doctors.find((d) => d.id === id);
-                  if (doctor) setCurrentDoctor(doctor);
-                }}
-              >
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {doctors.map((doctor) => (
-                    <SelectItem key={doctor.id} value={doctor.id}>
-                      <div className="flex flex-col">
-                        <span>{doctor.name}</span>
-                        <span className="text-xs text-muted-foreground">
-                          {doctor.role}
-                        </span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+          <DoctorSelect />
         </div>
       </header>
     );
@@ -124,32 +125,7 @@ export function PatientHeader() {
         </div>
 
         <div className="flex items-center gap-4 w-full sm:w-auto">
-          <div className="flex items-center gap-2">
-            <Stethoscope className="h-4 w-4 text-muted-foreground" />
-            <Select
-              value={currentDoctor.id}
-              onValueChange={(id) => {
-                const doctor = doctors.find((d) => d.id === id);
-                if (doctor) setCurrentDoctor(doctor);
-              }}
-            >
-              <SelectTrigger className="w-[200px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {doctors.map((doctor) => (
-                  <SelectItem key={doctor.id} value={doctor.id}>
-                    <div className="flex flex-col">
-                      <span>{doctor.name}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {doctor.role}
-                      </span>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <DoctorSelect />
         </div>
       </div>
     </header>

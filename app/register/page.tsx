@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { AuthShell } from "@/components/auth-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Activity } from "lucide-react";
 import { apiRequest, ApiError } from "@/lib/api";
 
 export default function RegisterPage() {
@@ -47,21 +47,11 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50/50 p-4">
-      <div className="w-full max-w-md space-y-8 rounded-xl bg-white p-8 shadow-sm ring-1 ring-gray-200">
-        <div className="flex flex-col items-center gap-2 text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-            <Activity className="h-6 w-6 text-primary" />
-          </div>
-          <h1 className="text-2xl font-bold tracking-tight">
-            Krijo llogari
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Regjistrohu si përdorues i ri (Roli fillestar: Infermier/e)
-          </p>
-        </div>
-
-        <form onSubmit={handleRegister} className="space-y-6">
+    <AuthShell
+      title="Krijo llogari"
+      subtitle="Regjistrohu si përdorues i ri (Roli fillestar: Infermier/e)"
+    >
+      <form onSubmit={handleRegister} className="space-y-6">
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -116,7 +106,6 @@ export default function RegisterPage() {
             </Link>
           </p>
         </form>
-      </div>
-    </div>
+    </AuthShell>
   );
 }

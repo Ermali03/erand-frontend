@@ -1,6 +1,7 @@
 import type React from "react";
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
+import { ClinicProvider } from "@/lib/clinic-context";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -36,8 +37,6 @@ export const metadata: Metadata = {
     "operacionet spitalore",
   ],
 };
-
-import { ClinicProvider } from "@/lib/clinic-context";
 
 export default function RootLayout({
   children,

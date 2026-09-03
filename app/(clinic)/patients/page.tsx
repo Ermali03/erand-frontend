@@ -1,6 +1,5 @@
 "use client";
 
-import type React from "react";
 import { useCallback, useEffect, useState } from "react";
 import { useClinic } from "@/lib/clinic-context";
 import {
@@ -11,7 +10,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Activity, Pencil, Plus, Printer } from "lucide-react";
+import {
+  Activity,
+  CheckCircle2,
+  Pencil,
+  Plus,
+  Printer,
+  Users,
+} from "lucide-react";
 import {
   Card,
   CardContent,
@@ -131,7 +137,7 @@ export default function PatientsDashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Gjithsej kartela</CardTitle>
-            <UsersIcon className="h-4 w-4 text-muted-foreground" />
+            <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{patients.length}</div>
@@ -159,7 +165,7 @@ export default function PatientsDashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Të lëshuar</CardTitle>
-            <CheckCircleIcon className="h-4 w-4 text-success" />
+            <CheckCircle2 className="h-4 w-4 text-success" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -278,47 +284,5 @@ export default function PatientsDashboardPage() {
         </div>
       )}
     </div>
-  );
-}
-
-function UsersIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-      <circle cx="9" cy="7" r="4" />
-      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-    </svg>
-  );
-}
-
-function CheckCircleIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-      <polyline points="22 4 12 14.01 9 11.01" />
-    </svg>
   );
 }

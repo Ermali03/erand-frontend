@@ -6,6 +6,7 @@ import {
   useState,
   useCallback,
   useEffect,
+  useMemo,
   type ReactNode,
 } from "react";
 import { useRouter, usePathname } from "next/navigation";
@@ -262,25 +263,28 @@ export function ClinicProvider({ children }: { children: ReactNode }) {
     }
   }, [token, pathname, router]);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
-    try {
-      const formData = new URLSearchParams();
-      formData.append("username", email);
-      formData.append("password", password);
+  const login = useCallback(
+    async (email: string, password: string): Promise<boolean> => {
+      try {
+        const formData = new URLSearchParams();
+        formData.append("username", email);
+        formData.append("password", password);
 
-      const data = await apiRequest<LoginResponse>("/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: formData.toString(),
-      });
-      setToken(data.access_token);
-      localStorage.setItem("token", data.access_token);
-      await fetchCurrentUser(data.access_token);
-      return true;
-    } catch {
-      return false;
-    }
-  };
+        const data = await apiRequest<LoginResponse>("/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: formData.toString(),
+        });
+        setToken(data.access_token);
+        localStorage.setItem("token", data.access_token);
+        await fetchCurrentUser(data.access_token);
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    [fetchCurrentUser],
+  );
 
   const refreshDoctors = useCallback(async () => {
     if (!token) return;
@@ -556,47 +560,78 @@ export function ClinicProvider({ children }: { children: ReactNode }) {
   const canNavigateToSurgery = isPatientAdmitted && patient.isOperated;
   const canNavigateToDischarge = isPatientAdmitted;
 
+  const value = useMemo<ClinicContextType>(
+    () => ({
+      authUser,
+      token,
+      login,
+      logout,
+      refreshDoctors,
+      patient,
+      setPatient,
+      updatePatient,
+      isPatientAdmitted,
+      savePatientDraft,
+      confirmAdmission,
+      saveEpicrisisRecord,
+      saveSurgeryRecord,
+      saveDischargeRecord,
+      startNewPatient,
+      loadPatientIntoWorkflow,
+      epicrisis,
+      setEpicrisis,
+      updateEpicrisis,
+      surgery,
+      setSurgery,
+      updateSurgery,
+      dischargeReport,
+      setDischargeReport,
+      updateDischargeReport,
+      dischargePatient,
+      doctors,
+      currentDoctor,
+      setCurrentDoctor,
+      canNavigateToEpicrisis,
+      canNavigateToSurgery,
+      canNavigateToDischarge,
+      hasPermission,
+      resetAll,
+    }),
+    [
+      authUser,
+      token,
+      login,
+      logout,
+      refreshDoctors,
+      patient,
+      updatePatient,
+      isPatientAdmitted,
+      savePatientDraft,
+      confirmAdmission,
+      saveEpicrisisRecord,
+      saveSurgeryRecord,
+      saveDischargeRecord,
+      startNewPatient,
+      loadPatientIntoWorkflow,
+      epicrisis,
+      updateEpicrisis,
+      surgery,
+      updateSurgery,
+      dischargeReport,
+      updateDischargeReport,
+      dischargePatient,
+      doctors,
+      currentDoctor,
+      canNavigateToEpicrisis,
+      canNavigateToSurgery,
+      canNavigateToDischarge,
+      hasPermission,
+      resetAll,
+    ],
+  );
+
   return (
-    <ClinicContext.Provider
-      value={{
-        authUser,
-        token,
-        login,
-        logout,
-        refreshDoctors,
-        patient,
-        setPatient,
-        updatePatient,
-        isPatientAdmitted,
-        savePatientDraft,
-        confirmAdmission,
-        saveEpicrisisRecord,
-        saveSurgeryRecord,
-        saveDischargeRecord,
-        startNewPatient,
-        loadPatientIntoWorkflow,
-        epicrisis,
-        setEpicrisis,
-        updateEpicrisis,
-        surgery,
-        setSurgery,
-        updateSurgery,
-        dischargeReport,
-        setDischargeReport,
-        updateDischargeReport,
-        dischargePatient,
-        doctors,
-        currentDoctor,
-        setCurrentDoctor,
-        canNavigateToEpicrisis,
-        canNavigateToSurgery,
-        canNavigateToDischarge,
-        hasPermission,
-        resetAll,
-      }}
-    >
-      {children}
-    </ClinicContext.Provider>
+    <ClinicContext.Provider value={value}>{children}</ClinicContext.Provider>
   );
 }
 

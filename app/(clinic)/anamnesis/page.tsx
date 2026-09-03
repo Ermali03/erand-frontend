@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { useClinic } from "@/lib/clinic-context"
 import { Save, CheckCircle, AlertCircle, Lock, Plus } from "lucide-react"
-import { Alert, AlertDescription } from "@/components/ui/alert"
+import { toast } from "sonner"
 import { ApiError } from "@/lib/api"
 
 export default function AnamnesisPage() {
@@ -26,9 +26,6 @@ export default function AnamnesisPage() {
     hasPermission,
   } = useClinic()
   const [isSaving, setIsSaving] = useState(false)
-  const [showSavedMessage, setShowSavedMessage] = useState(false)
-  const [savedMessage, setSavedMessage] = useState("Draft-i u ruajt me sukses")
-  const [errorMessage, setErrorMessage] = useState("")
 
   const canEdit = hasPermission("edit")
   const hasExistingRecord = Boolean(patient.id)
@@ -36,15 +33,12 @@ export default function AnamnesisPage() {
 
   const handleSaveDraft = async () => {
     setIsSaving(true)
-    setErrorMessage("")
 
     try {
       await savePatientDraft()
-      setSavedMessage("Draft-i u ruajt me sukses")
-      setShowSavedMessage(true)
-      setTimeout(() => setShowSavedMessage(false), 3000)
+      toast.success("Draft-i u ruajt me sukses")
     } catch (error) {
-      setErrorMessage(
+      toast.error(
         error instanceof ApiError ? error.message : "Ruajtja e draft-it të pacientit dështoi",
       )
     } finally {
@@ -58,12 +52,12 @@ export default function AnamnesisPage() {
     }
 
     setIsSaving(true)
-    setErrorMessage("")
 
     try {
       await confirmAdmission()
+      toast.success("Pacienti u pranua me sukses")
     } catch (error) {
-      setErrorMessage(
+      toast.error(
         error instanceof ApiError ? error.message : "Ruajtja e pranimit të pacientit dështoi",
       )
     } finally {
@@ -101,20 +95,6 @@ export default function AnamnesisPage() {
           )}
         </div>
       </div>
-
-      {showSavedMessage && (
-        <Alert className="border-success bg-success/10">
-          <CheckCircle className="h-4 w-4 text-success" />
-          <AlertDescription className="text-success">{savedMessage}</AlertDescription>
-        </Alert>
-      )}
-
-      {errorMessage && (
-        <Alert className="border-destructive bg-destructive/10">
-          <AlertCircle className="h-4 w-4 text-destructive" />
-          <AlertDescription className="text-destructive">{errorMessage}</AlertDescription>
-        </Alert>
-      )}
 
       {/* Personal Information */}
       <Card>

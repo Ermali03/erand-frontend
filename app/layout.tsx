@@ -2,6 +2,8 @@ import type React from "react";
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { ClinicProvider } from "@/lib/clinic-context";
+import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -44,9 +46,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="sq">
+    <html lang="sq" suppressHydrationWarning>
       <body className="min-h-screen font-sans antialiased">
-        <ClinicProvider>{children}</ClinicProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <ClinicProvider>{children}</ClinicProvider>
+          <Toaster richColors closeButton position="top-right" />
+        </ThemeProvider>
         <Analytics />
       </body>
     </html>

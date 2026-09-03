@@ -140,6 +140,7 @@ export default function DischargePage() {
       specialistName:
         mainSurgeon?.doctorName || currentDoctor.name || "________________",
       headOfUnitName: currentDoctor.name || "________________",
+      clinicDirectorName: "________________",
       dischargeClinician,
     };
   }, [
@@ -519,18 +520,6 @@ export default function DischargePage() {
                   }
                 />
               </p>
-              {followUpLines.length > 0 ? (
-                <div>
-                  {followUpLines.map((line, index) => (
-                    <p key={`${line}-${index}`}>{line}</p>
-                  ))}
-                </div>
-              ) : (
-                <p>
-                  Kontrolla sipas udhëzimit të mjekut ordinues në ambulantën
-                  specialistike të ortopedisë me fletëlëshim.
-                </p>
-              )}
             </div>
 
             <div className="space-y-2">
@@ -588,15 +577,15 @@ export default function DischargePage() {
                 <div className="pt-2">
                   <p className="font-semibold">
                     <span className="hidden print:inline">
-                      {paper.specialistName}
+                      {paper.headOfUnitName}
                     </span>
                     <input
                       className="w-full bg-transparent text-center font-semibold outline-none print:hidden"
-                      value={paper.specialistName}
+                      value={paper.headOfUnitName}
                       onChange={(e) =>
                         setPaper((prev) => ({
                           ...prev,
-                          specialistName: e.target.value,
+                          headOfUnitName: e.target.value,
                         }))
                       }
                     />
@@ -630,15 +619,15 @@ export default function DischargePage() {
                 <div className="pt-2">
                   <p className="font-semibold">
                     <span className="hidden print:inline">
-                      {paper.headOfUnitName}
+                      {paper.clinicDirectorName}
                     </span>
                     <input
                       className="w-full bg-transparent text-center font-semibold outline-none print:hidden"
-                      value={paper.headOfUnitName}
+                      value={paper.clinicDirectorName}
                       onChange={(e) =>
                         setPaper((prev) => ({
                           ...prev,
-                          headOfUnitName: e.target.value,
+                          clinicDirectorName: e.target.value,
                         }))
                       }
                     />

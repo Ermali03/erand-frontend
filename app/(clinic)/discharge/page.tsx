@@ -1,7 +1,7 @@
 "use client";
-import { useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -34,8 +34,10 @@ function splitLines(value: string) {
     .filter(Boolean);
 }
 
-export default function DischargePage() {
+function DischargeContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const hasAutoPrinted = useRef(false);
   const {
     isPatientAdmitted,
     patient,
@@ -165,6 +167,17 @@ export default function DischargePage() {
   const [paper, setPaper] = useState(() => initialPaper);
   const therapyLines = splitLines(dischargeReport.therapyForHome);
   const followUpLines = splitLines(dischargeReport.followUpInstructions);
+
+  // When opened with ?print=1 (e.g. the Printo button in the patients list),
+  // open the browser print dialog once the document has painted.
+  useEffect(() => {
+    if (hasAutoPrinted.current) return;
+    if (searchParams.get("print") !== "1") return;
+    if (!isPatientAdmitted) return;
+    hasAutoPrinted.current = true;
+    const timer = setTimeout(() => window.print(), 400);
+    return () => clearTimeout(timer);
+  }, [searchParams, isPatientAdmitted]);
 
   if (!isPatientAdmitted) {
     return (
@@ -678,5 +691,13 @@ export default function DischargePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function DischargePage() {
+  return (
+    <Suspense fallback={null}>
+      <DischargeContent />
+    </Suspense>
   );
 }

@@ -51,6 +51,9 @@ export default function PatientsDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [editingPatientId, setEditingPatientId] = useState<string | null>(null);
+  const [printingPatientId, setPrintingPatientId] = useState<string | null>(
+    null,
+  );
 
   const loadPatients = useCallback(async () => {
     try {
@@ -100,6 +103,21 @@ export default function PatientsDashboardPage() {
       setError(e instanceof Error ? e.message : "Hapja e formularit të pacientit dështoi");
     } finally {
       setEditingPatientId(null);
+    }
+  };
+
+  const handlePrintPatient = async (patientId: string) => {
+    setPrintingPatientId(patientId);
+    setError("");
+
+    try {
+      await loadPatientIntoWorkflow(patientId);
+      router.push("/discharge?print=1");
+    } catch (e: unknown) {
+      setError(
+        e instanceof Error ? e.message : "Hapja e fletëlëshimit dështoi",
+      );
+      setPrintingPatientId(null);
     }
   };
 
@@ -258,10 +276,9 @@ export default function PatientsDashboardPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        aria-label={`Printo ${p.full_name}`}
-                        onClick={() =>
-                          window.open(`/patients/${p.id}?print=1`, "_blank")
-                        }
+                        aria-label={`Printo fletëlëshimin për ${p.full_name}`}
+                        disabled={printingPatientId === p.id}
+                        onClick={() => void handlePrintPatient(p.id)}
                       >
                         <Printer className="h-4 w-4" />
                       </Button>

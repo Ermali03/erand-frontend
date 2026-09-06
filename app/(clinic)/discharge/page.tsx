@@ -136,7 +136,8 @@ function DischargeContent() {
       admissionDate: formatDate(patient.admissionDateTime),
       dischargeDate: dischargeDateLabel,
       diagnosisAtAdmission,
-      diagnosisAtDischarge: dischargeReport.finalDiagnosis || diagnosisAtAdmission,
+      diagnosisAtDischarge:
+        dischargeReport.finalDiagnosis || diagnosisAtAdmission,
       hospitalizationNarrative,
       inpatientTherapyNarrative,
       specialistName:
@@ -144,6 +145,10 @@ function DischargeContent() {
       headOfUnitName: currentDoctor.name || "________________",
       clinicDirectorName: "________________",
       dischargeClinician,
+      specialistTitle: "ortoped",
+      headOfUnitTitle: "ortoped",
+      dischargeClinicianTitle: "specializant",
+      clinicDirectorTitle: "ortoped",
     };
   }, [
     currentDoctor.name,
@@ -168,6 +173,27 @@ function DischargeContent() {
   const therapyLines = splitLines(dischargeReport.therapyForHome);
   const followUpLines = splitLines(dischargeReport.followUpInstructions);
 
+  // Auto-fill the discharge "Terapia" from the medications entered in Epicrisis.
+  // Keeps syncing while the field is untouched; stops once the user edits it.
+  const medicationTherapy = useMemo(
+    () =>
+      epicrisis.medications
+        .map((m) => `${m.name} ${m.dosage} ${m.frequency}`.replace(/\s+/g, " ").trim())
+        .filter(Boolean)
+        .join("\n"),
+    [epicrisis.medications],
+  );
+  const autoTherapyRef = useRef("");
+  useEffect(() => {
+    if (!medicationTherapy) return;
+    const current = dischargeReport.therapyForHome;
+    const isUntouched = current === "" || current === autoTherapyRef.current;
+    if (isUntouched && current !== medicationTherapy) {
+      autoTherapyRef.current = medicationTherapy;
+      updateDischargeReport({ therapyForHome: medicationTherapy });
+    }
+  }, [medicationTherapy, dischargeReport.therapyForHome, updateDischargeReport]);
+
   // When opened with ?print=1 (e.g. the Printo button in the patients list),
   // open the browser print dialog once the document has painted.
   useEffect(() => {
@@ -186,7 +212,8 @@ function DischargeContent() {
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Pacienti nuk është pranuar</AlertTitle>
           <AlertDescription>
-            Ju lutem plotësoni anamnezën dhe konfirmoni pranimin para se të hapni lëshimin.
+            Ju lutem plotësoni anamnezën dhe konfirmoni pranimin para se të
+            hapni lëshimin.
           </AlertDescription>
         </Alert>
         <Button className="mt-4" onClick={() => router.push("/anamnesis")}>
@@ -211,7 +238,9 @@ function DischargeContent() {
           {patient.isDischarged && (
             <div className="flex items-center gap-2 rounded-lg bg-success/10 px-4 py-2">
               <CheckCircle className="h-4 w-4 text-success" />
-              <span className="text-sm text-success">Pacienti është lëshuar</span>
+              <span className="text-sm text-success">
+                Pacienti është lëshuar
+              </span>
             </div>
           )}
         </div>
@@ -240,7 +269,9 @@ function DischargeContent() {
             {patient.isDischarged && (
               <div className="flex items-center gap-2 text-success">
                 <Lock className="h-4 w-4" />
-                <span className="text-sm">Mund të modifikohet edhe pas lëshimit</span>
+                <span className="text-sm">
+                  Mund të modifikohet edhe pas lëshimit
+                </span>
               </div>
             )}
           </div>
@@ -248,7 +279,7 @@ function DischargeContent() {
         <CardContent className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="finalDiagnosis">
-              Final Diagnosis <span className="text-destructive">*</span>
+              Diagnoza përfundimtare <span className="text-destructive">*</span>
             </Label>
             <Textarea
               id="finalDiagnosis"
@@ -263,7 +294,7 @@ function DischargeContent() {
 
           <div className="space-y-2">
             <Label htmlFor="therapyForHome">
-              Therapy for Home <span className="text-destructive">*</span>
+              Terapia <span className="text-destructive">*</span>
             </Label>
             <Textarea
               id="therapyForHome"
@@ -278,7 +309,7 @@ function DischargeContent() {
 
           <div className="space-y-2">
             <Label htmlFor="followUpInstructions">
-              Follow-up Instructions <span className="text-destructive">*</span>
+              Udhëzimet<span className="text-destructive">*</span>
             </Label>
             <Textarea
               id="followUpInstructions"
@@ -299,7 +330,8 @@ function DischargeContent() {
             Pamja përfundimtare e dokumentit
           </h2>
           <p className="text-sm text-muted-foreground">
-            Ky është dokumenti njëfaqësh i lëshimit që do të printohet dhe ndahet me ekipin e pacientit.
+            Ky është dokumenti njëfaqësh i lëshimit që do të printohet dhe
+            ndahet me ekipin e pacientit.
           </p>
         </div>
 
@@ -360,12 +392,17 @@ function DischargeContent() {
                     Emri, emri i prindit, mbiemri:
                   </span>{" "}
                   <span className="pl-3 font-semibold">
-                    <span className="hidden print:inline">{paper.patientName}</span>
+                    <span className="hidden print:inline">
+                      {paper.patientName}
+                    </span>
                     <input
                       className="w-full bg-transparent font-semibold outline-none print:hidden"
                       value={paper.patientName}
                       onChange={(e) =>
-                        setPaper((prev) => ({ ...prev, patientName: e.target.value }))
+                        setPaper((prev) => ({
+                          ...prev,
+                          patientName: e.target.value,
+                        }))
                       }
                     />
                   </span>
@@ -373,12 +410,17 @@ function DischargeContent() {
                 <div className="border-b border-black/60 pb-1">
                   <span className="font-medium">Data e lindjes:</span>{" "}
                   <span className="pl-3 font-semibold">
-                    <span className="hidden print:inline">{paper.birthDate}</span>
+                    <span className="hidden print:inline">
+                      {paper.birthDate}
+                    </span>
                     <input
                       className="w-full bg-transparent font-semibold outline-none print:hidden"
                       value={paper.birthDate}
                       onChange={(e) =>
-                        setPaper((prev) => ({ ...prev, birthDate: e.target.value }))
+                        setPaper((prev) => ({
+                          ...prev,
+                          birthDate: e.target.value,
+                        }))
                       }
                     />
                   </span>
@@ -389,12 +431,17 @@ function DischargeContent() {
                 <div className="border-b border-black/60 pb-1">
                   <span className="font-medium">Vendlindja:</span>{" "}
                   <span className="pl-3">
-                    <span className="hidden print:inline">{paper.birthPlace}</span>
+                    <span className="hidden print:inline">
+                      {paper.birthPlace}
+                    </span>
                     <input
                       className="w-full bg-transparent outline-none print:hidden"
                       value={paper.birthPlace}
                       onChange={(e) =>
-                        setPaper((prev) => ({ ...prev, birthPlace: e.target.value }))
+                        setPaper((prev) => ({
+                          ...prev,
+                          birthPlace: e.target.value,
+                        }))
                       }
                     />
                   </span>
@@ -407,7 +454,10 @@ function DischargeContent() {
                       className="w-full bg-transparent outline-none print:hidden"
                       value={paper.address}
                       onChange={(e) =>
-                        setPaper((prev) => ({ ...prev, address: e.target.value }))
+                        setPaper((prev) => ({
+                          ...prev,
+                          address: e.target.value,
+                        }))
                       }
                     />
                   </span>
@@ -418,12 +468,17 @@ function DischargeContent() {
                 <div className="border-b border-black/60 pb-1">
                   <span className="font-medium">Profesioni:</span>{" "}
                   <span className="pl-3">
-                    <span className="hidden print:inline">{paper.profession}</span>
+                    <span className="hidden print:inline">
+                      {paper.profession}
+                    </span>
                     <input
                       className="w-full bg-transparent outline-none print:hidden"
                       value={paper.profession}
                       onChange={(e) =>
-                        setPaper((prev) => ({ ...prev, profession: e.target.value }))
+                        setPaper((prev) => ({
+                          ...prev,
+                          profession: e.target.value,
+                        }))
                       }
                     />
                   </span>
@@ -431,7 +486,9 @@ function DischargeContent() {
                 <div className="border-b border-black/60 pb-1">
                   <span className="font-medium">Është mjekuar nga data:</span>{" "}
                   <span className="pl-3 font-semibold">
-                    <span className="hidden print:inline">{paper.admissionDate}</span>
+                    <span className="hidden print:inline">
+                      {paper.admissionDate}
+                    </span>
                     <input
                       className="w-[120px] bg-transparent font-semibold outline-none print:hidden"
                       value={paper.admissionDate}
@@ -445,7 +502,9 @@ function DischargeContent() {
                   </span>
                   <span className="pl-4 font-medium">deri më:</span>{" "}
                   <span className="pl-3 font-semibold">
-                    <span className="hidden print:inline">{paper.dischargeDate}</span>
+                    <span className="hidden print:inline">
+                      {paper.dischargeDate}
+                    </span>
                     <input
                       className="w-[120px] bg-transparent font-semibold outline-none print:hidden"
                       value={paper.dischargeDate}
@@ -536,7 +595,7 @@ function DischargeContent() {
             </div>
 
             <div className="space-y-2">
-              <p className="font-bold">Th:</p>
+              <p className="font-bold">Terapia:</p>
               {therapyLines.length > 0 ? (
                 <ul className="space-y-1 pl-6">
                   {therapyLines.map((line, index) => (
@@ -550,20 +609,57 @@ function DischargeContent() {
               )}
             </div>
 
-            <div className="space-y-1">
+            <div className="space-y-2">
+              <p className="font-bold">Udhëzimet:</p>
               {followUpLines.length > 0 ? (
-                followUpLines.map((line, index) => (
-                  <p key={`follow-up-${index}`}>{line}</p>
-                ))
+                <ul className="space-y-1 pl-6">
+                  {followUpLines.map((line, index) => (
+                    <li key={`follow-${line}-${index}`} className="list-disc">
+                      {line}
+                    </li>
+                  ))}
+                </ul>
               ) : (
-                <>
-                  <p>Pastrimi i plagës sipas udhëzimit të mjekut.</p>
-                  <p>Kontrolla në ambulantën specialistike të ortopedisë.</p>
-                </>
+                <p className="pl-6">____________________________</p>
               )}
             </div>
 
             <div className="grid grid-cols-4 gap-x-2 gap-y-6 pt-10 text-center text-[11px] print:gap-x-2">
+              <div className="space-y-2">
+                <p className="font-medium">Mjeku në repart:</p>
+                <div className="pt-2">
+                  <p className="font-semibold">
+                    <span className="hidden print:inline">
+                      {paper.dischargeClinician}
+                    </span>
+                    <input
+                      className="w-full bg-transparent text-center font-semibold outline-none print:hidden"
+                      value={paper.dischargeClinician}
+                      onChange={(e) =>
+                        setPaper((prev) => ({
+                          ...prev,
+                          dischargeClinician: e.target.value,
+                        }))
+                      }
+                    />
+                  </p>
+                  <p>
+                    <span className="hidden print:inline">
+                      {paper.dischargeClinicianTitle}
+                    </span>
+                    <input
+                      className="w-full bg-transparent text-center outline-none print:hidden"
+                      value={paper.dischargeClinicianTitle}
+                      onChange={(e) =>
+                        setPaper((prev) => ({
+                          ...prev,
+                          dischargeClinicianTitle: e.target.value,
+                        }))
+                      }
+                    />
+                  </p>
+                </div>
+              </div>
               <div className="space-y-2">
                 <p className="font-medium">Specialisti në repart:</p>
                 <div className="pt-2">
@@ -582,7 +678,21 @@ function DischargeContent() {
                       }
                     />
                   </p>
-                  <p>ortoped</p>
+                  <p>
+                    <span className="hidden print:inline">
+                      {paper.specialistTitle}
+                    </span>
+                    <input
+                      className="w-full bg-transparent text-center outline-none print:hidden"
+                      value={paper.specialistTitle}
+                      onChange={(e) =>
+                        setPaper((prev) => ({
+                          ...prev,
+                          specialistTitle: e.target.value,
+                        }))
+                      }
+                    />
+                  </p>
                 </div>
               </div>
               <div className="space-y-2">
@@ -603,30 +713,24 @@ function DischargeContent() {
                       }
                     />
                   </p>
-                  <p>ortoped</p>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <p className="font-medium">Mjeku në repart:</p>
-                <div className="pt-2">
-                  <p className="font-semibold">
+                  <p>
                     <span className="hidden print:inline">
-                      {paper.dischargeClinician}
+                      {paper.headOfUnitTitle}
                     </span>
                     <input
-                      className="w-full bg-transparent text-center font-semibold outline-none print:hidden"
-                      value={paper.dischargeClinician}
+                      className="w-full bg-transparent text-center outline-none print:hidden"
+                      value={paper.headOfUnitTitle}
                       onChange={(e) =>
                         setPaper((prev) => ({
                           ...prev,
-                          dischargeClinician: e.target.value,
+                          headOfUnitTitle: e.target.value,
                         }))
                       }
                     />
                   </p>
-                  <p>specializant</p>
                 </div>
               </div>
+
               <div className="space-y-2">
                 <p className="font-medium">Drejtori i Klinikës:</p>
                 <div className="pt-2">
@@ -645,7 +749,21 @@ function DischargeContent() {
                       }
                     />
                   </p>
-                  <p>ortoped</p>
+                  <p>
+                    <span className="hidden print:inline">
+                      {paper.clinicDirectorTitle}
+                    </span>
+                    <input
+                      className="w-full bg-transparent text-center outline-none print:hidden"
+                      value={paper.clinicDirectorTitle}
+                      onChange={(e) =>
+                        setPaper((prev) => ({
+                          ...prev,
+                          clinicDirectorTitle: e.target.value,
+                        }))
+                      }
+                    />
+                  </p>
                 </div>
               </div>
             </div>

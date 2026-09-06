@@ -1,21 +1,33 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { useClinic } from "@/lib/clinic-context"
-import { Save, CheckCircle, AlertCircle, Lock, Plus } from "lucide-react"
-import { toast } from "sonner"
-import { ApiError } from "@/lib/api"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useClinic } from "@/lib/clinic-context";
+import { Save, CheckCircle, AlertCircle, Lock, Plus } from "lucide-react";
+import { toast } from "sonner";
+import { ApiError } from "@/lib/api";
 
 export default function AnamnesisPage() {
-  const router = useRouter()
+  const router = useRouter();
   const {
     patient,
     updatePatient,
@@ -24,69 +36,84 @@ export default function AnamnesisPage() {
     confirmAdmission,
     startNewPatient,
     hasPermission,
-  } = useClinic()
-  const [isSaving, setIsSaving] = useState(false)
+  } = useClinic();
+  const [isSaving, setIsSaving] = useState(false);
 
-  const canEdit = hasPermission("edit")
-  const hasExistingRecord = Boolean(patient.id)
-  const isDraftRecord = patient.status === "draft"
+  const canEdit = hasPermission("edit");
+  const hasExistingRecord = patient.isPersisted;
+  const isDraftRecord = patient.status === "draft";
 
   const handleSaveDraft = async () => {
-    setIsSaving(true)
+    setIsSaving(true);
 
     try {
-      await savePatientDraft()
-      toast.success("Draft-i u ruajt me sukses")
+      await savePatientDraft();
+      toast.success("Draft-i u ruajt me sukses");
     } catch (error) {
       toast.error(
-        error instanceof ApiError ? error.message : "Ruajtja e draft-it të pacientit dështoi",
-      )
+        error instanceof ApiError
+          ? error.message
+          : "Ruajtja e draft-it të pacientit dështoi",
+      );
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
   const handleConfirmAdmission = async () => {
-    if (!patient.fullName || !patient.dateOfBirth || !patient.reasonForAdmission) {
-      return
+    if (
+      !patient.fullName ||
+      !patient.dateOfBirth ||
+      !patient.reasonForAdmission
+    ) {
+      return;
     }
 
-    setIsSaving(true)
+    setIsSaving(true);
 
     try {
-      await confirmAdmission()
-      toast.success("Pacienti u pranua me sukses")
+      await confirmAdmission();
+      toast.success("Pacienti u pranua me sukses");
     } catch (error) {
       toast.error(
-        error instanceof ApiError ? error.message : "Ruajtja e pranimit të pacientit dështoi",
-      )
+        error instanceof ApiError
+          ? error.message
+          : "Ruajtja e pranimit të pacientit dështoi",
+      );
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
-  const isFormValid = patient.fullName && patient.dateOfBirth && patient.reasonForAdmission
+  const isFormValid =
+    patient.fullName && patient.dateOfBirth && patient.reasonForAdmission;
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Anamneza e pacientit</h1>
-          <p className="text-muted-foreground">Regjistroni pacientin e ri në momentin e pranimit</p>
+          <h1 className="text-2xl font-bold text-foreground">
+            Anamneza e pacientit
+          </h1>
+          <p className="text-muted-foreground">
+            Regjistroni pacientin e ri në momentin e pranimit
+          </p>
         </div>
         <div className="flex items-center gap-3">
           {patient.isDischarged && (
             <div className="flex items-center gap-2 rounded-lg bg-success/10 px-4 py-2">
               <Lock className="h-4 w-4 text-success" />
-              <span className="text-sm text-success">Pacienti është lëshuar, por modifikimi lejohet</span>
+              <span className="text-sm text-success">
+                Pacienti është lëshuar, por modifikimi lejohet
+              </span>
             </div>
           )}
           {(isPatientAdmitted || hasExistingRecord) && (
             <Button
               variant="outline"
               onClick={() => {
-                startNewPatient()
-                router.push("/anamnesis")
+                startNewPatient();
+                router.push("/anamnesis");
               }}
             >
               <Plus className="mr-2 h-4 w-4" />
@@ -103,6 +130,22 @@ export default function AnamnesisPage() {
           <CardDescription>Të dhënat bazë të pacientit</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-6 sm:grid-cols-2">
+          <div className="space-y-2 sm:col-span-2">
+            <Label htmlFor="patientId">ID e pacientit / Numri i historisë</Label>
+            <Input
+              id="patientId"
+              placeholder="Shkruani ID-në tuaj (lëreni bosh për ta gjeneruar automatikisht)"
+              value={patient.id}
+              onChange={(e) => updatePatient({ id: e.target.value })}
+              disabled={!canEdit || patient.isPersisted}
+            />
+            {patient.isPersisted && (
+              <p className="text-xs text-muted-foreground">
+                ID-ja nuk mund të ndryshohet pasi pacienti është ruajtur.
+              </p>
+            )}
+          </div>
+
           <div className="space-y-2 sm:col-span-2">
             <Label htmlFor="fullName">
               Emri i plotë <span className="text-destructive">*</span>
@@ -133,7 +176,9 @@ export default function AnamnesisPage() {
             <Label>Gjinia</Label>
             <RadioGroup
               value={patient.gender}
-              onValueChange={(value: "male" | "female" | "other") => updatePatient({ gender: value })}
+              onValueChange={(value: "male" | "female" | "other") =>
+                updatePatient({ gender: value })
+              }
               disabled={!canEdit}
               className="flex gap-4"
             >
@@ -174,20 +219,9 @@ export default function AnamnesisPage() {
             <Input
               id="phone"
               type="tel"
-              placeholder="+1 (555) 000-0000"
+              placeholder="+383 (44) 123-456"
               value={patient.phone}
               onChange={(e) => updatePatient({ phone: e.target.value })}
-              disabled={!canEdit}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="emergencyContact">Kontakt emergjent</Label>
-            <Input
-              id="emergencyContact"
-              placeholder="Emri dhe numri i telefonit"
-              value={patient.emergencyContact}
-              onChange={(e) => updatePatient({ emergencyContact: e.target.value })}
               disabled={!canEdit}
             />
           </div>
@@ -205,7 +239,9 @@ export default function AnamnesisPage() {
             <Label htmlFor="admissionSource">Burimi i pranimit</Label>
             <Select
               value={patient.admissionSource}
-              onValueChange={(value: "ED" | "Clinic") => updatePatient({ admissionSource: value })}
+              onValueChange={(value: "ED" | "Clinic") =>
+                updatePatient({ admissionSource: value })
+              }
               disabled={!canEdit}
             >
               <SelectTrigger id="admissionSource">
@@ -224,7 +260,9 @@ export default function AnamnesisPage() {
               id="admissionDateTime"
               type="datetime-local"
               value={patient.admissionDateTime}
-              onChange={(e) => updatePatient({ admissionDateTime: e.target.value })}
+              onChange={(e) =>
+                updatePatient({ admissionDateTime: e.target.value })
+              }
               disabled={!canEdit}
             />
           </div>
@@ -237,7 +275,9 @@ export default function AnamnesisPage() {
               id="reasonForAdmission"
               placeholder="Përshkruani arsyen e pranimit"
               value={patient.reasonForAdmission}
-              onChange={(e) => updatePatient({ reasonForAdmission: e.target.value })}
+              onChange={(e) =>
+                updatePatient({ reasonForAdmission: e.target.value })
+              }
               disabled={!canEdit}
               rows={3}
             />
@@ -253,12 +293,16 @@ export default function AnamnesisPage() {
         </CardHeader>
         <CardContent className="grid gap-6">
           <div className="space-y-2">
-            <Label htmlFor="pastMedicalHistory">Historia e kaluar mjekësore</Label>
+            <Label htmlFor="pastMedicalHistory">
+              Historia e kaluar mjekësore
+            </Label>
             <Textarea
               id="pastMedicalHistory"
               placeholder="Sëmundje të mëparshme, operacione, hospitalizime..."
               value={patient.pastMedicalHistory}
-              onChange={(e) => updatePatient({ pastMedicalHistory: e.target.value })}
+              onChange={(e) =>
+                updatePatient({ pastMedicalHistory: e.target.value })
+              }
               disabled={!canEdit}
               rows={3}
             />
@@ -282,7 +326,9 @@ export default function AnamnesisPage() {
               id="currentMedications"
               placeholder="Shkruani barnat aktuale me dozat..."
               value={patient.currentMedications}
-              onChange={(e) => updatePatient({ currentMedications: e.target.value })}
+              onChange={(e) =>
+                updatePatient({ currentMedications: e.target.value })
+              }
               disabled={!canEdit}
               rows={2}
             />
@@ -298,20 +344,35 @@ export default function AnamnesisPage() {
             <span>Fushat me * janë të detyrueshme për pranim</span>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" onClick={handleSaveDraft} disabled={isSaving}>
+            <Button
+              variant="outline"
+              onClick={handleSaveDraft}
+              disabled={isSaving}
+            >
               <Save className="mr-2 h-4 w-4" />
-              {isSaving ? "Duke ruajtur..." : isDraftRecord || !hasExistingRecord ? "Ruaj draftin" : "Ruaj ndryshimet"}
+              {isSaving
+                ? "Duke ruajtur..."
+                : isDraftRecord || !hasExistingRecord
+                  ? "Ruaj draftin"
+                  : "Ruaj ndryshimet"}
             </Button>
             {!patient.isDischarged && !isPatientAdmitted && (
-              <Button onClick={handleConfirmAdmission} disabled={!isFormValid || isSaving}>
+              <Button
+                onClick={handleConfirmAdmission}
+                disabled={!isFormValid || isSaving}
+              >
                 <CheckCircle className="mr-2 h-4 w-4" />
                 Konfirmo pranimin
               </Button>
             )}
-            {isPatientAdmitted && <Button onClick={() => router.push("/epicrisis")}>Vazhdo te epikriza</Button>}
+            {isPatientAdmitted && (
+              <Button onClick={() => router.push("/epicrisis")}>
+                Vazhdo te epikriza
+              </Button>
+            )}
           </div>
         </div>
       )}
     </div>
-  )
+  );
 }

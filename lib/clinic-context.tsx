@@ -172,6 +172,7 @@ function normalizePatientRecord(record: PatientRecordResponse): Patient {
     status,
     isOperated: record.is_operated,
     isDischarged: status === "discharged",
+    isPersisted: true,
   };
 }
 
@@ -333,7 +334,7 @@ export function ClinicProvider({ children }: { children: ReactNode }) {
         is_operated: patient.isOperated,
       };
 
-      const savedPatient = patient.id
+      const savedPatient = patient.isPersisted
         ? await apiRequest<PatientRecordResponse>(`/patients/${patient.id}`, {
             method: "PUT",
             token,
@@ -343,7 +344,7 @@ export function ClinicProvider({ children }: { children: ReactNode }) {
             method: "POST",
             token,
             body: {
-              id: generatePatientId(),
+              id: patient.id.trim() || generatePatientId(),
               ...patientPayload,
             },
           });

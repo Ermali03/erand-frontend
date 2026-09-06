@@ -26,6 +26,7 @@ export const createEmptyPatient = (): Patient => ({
   status: "admitted",
   isOperated: false,
   isDischarged: false,
+  isPersisted: false,
 })
 
 export const createEmptyEpicrisis = (): Epicrisis => ({

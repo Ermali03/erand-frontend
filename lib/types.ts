@@ -45,6 +45,8 @@ export interface Patient {
   status: PatientStatus;
   isOperated: boolean;
   isDischarged: boolean;
+  /** True once the record exists in the backend (drives create vs. update). */
+  isPersisted: boolean;
 }
 
 export interface ProgressNote {

@@ -550,7 +550,7 @@ export default function DischargePage() {
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-x-10 gap-y-3 pt-12 text-center text-[13px]">
+            <div className="grid grid-cols-4 gap-x-2 gap-y-6 pt-10 text-center text-[11px] print:gap-x-2">
               <div className="space-y-2">
                 <p className="font-medium">Specialisti në repart:</p>
                 <div className="pt-2">

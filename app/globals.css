@@ -158,6 +158,23 @@
     background: #fff !important;
   }
 
+  /* Print only the document: drop the app chrome (sidebar, layout padding). */
+  [data-slot="sidebar-gap"],
+  [data-slot="sidebar-container"],
+  [data-slot="sidebar-trigger"],
+  [data-slot="sidebar-rail"] {
+    display: none !important;
+  }
+
+  [data-slot="sidebar-inset"] {
+    margin: 0 !important;
+    box-shadow: none !important;
+  }
+
+  [data-slot="sidebar-inset"] > main {
+    padding: 0 !important;
+  }
+
   #discharge-paper {
     box-shadow: none !important;
     border: 1px solid #d7dde4 !important;
